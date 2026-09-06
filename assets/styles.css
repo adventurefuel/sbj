@@ -455,6 +455,34 @@ nav.main-nav a.active {
   margin-top: 6px;
 }
 
+.powered-by {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--cream-dim);
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+}
+.powered-by:hover { opacity: 1; }
+.powered-by img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+.powered-by a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cream-dim);
+}
+.powered-by a:hover { color: var(--gold); }
+
 /* ---------- Generic page hero (subpages) ---------- */
 
 .page-hero {

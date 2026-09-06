@@ -1,7 +1,7 @@
 # Sum-Bourbon Joe — sbj
 
 A static, no-build-step site: the landing page (`index.html`), Joe's price
-checker (`bourbon.html`), the Detroit events page (`detroit.html`), the
+checker (`bourbon.html`), the Wine/Bourbon Events page (`events.html`), the
 watch page (`watch.html`), the story-submission form
 (`tell-your-story.html`), and a gated admin panel (`admin.html`) — all
 reading and writing directly to Supabase via `@supabase/supabase-js` in the
@@ -18,8 +18,10 @@ backend, deployed on Render as a static site.
   seeded price sheet and shows the known MSRP/secondary range, you log what
   you paid, and it computes a verdict (scored / fair / got taken) that's
   added to the public "Joe's Verdicts" feed.
-- `detroit.html` — **What's Pouring Locally**. Reads events from Supabase;
-  launches empty with a friendly placeholder until real events are added.
+- `events.html` — **Wine/Bourbon Events** ("What's Pouring Locally?"). Reads
+  events from Supabase; launches empty with a friendly placeholder until
+  real events are added. (Was `detroit.html` — `_redirects` forwards the
+  old path.)
 - `watch.html` — links out to `https://www.youtube.com/@SumbourbonJoe`.
 - `tell-your-story.html` — the "want to be on the show" submission form.
 - `admin.html` — sign-in gated tool for managing the price sheet, events,

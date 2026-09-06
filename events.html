@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Watch | Sum-Bourbon Joe</title>
-<meta name="description" content="Catch the latest episodes of Sum-Bourbon Joe on YouTube." />
+<title>Wine/Bourbon Events | Sum-Bourbon Joe</title>
+<meta name="description" content="Bourbon events, tastings, and pours happening around Metro Detroit." />
 <link rel="icon" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,9 +21,9 @@
     </a>
     <nav class="main-nav" id="mainNav">
       <a href="index.html">Home</a>
-      <a href="watch.html" class="active">Watch</a>
+      <a href="watch.html">Watch</a>
       <a href="bourbon.html">Bourbon</a>
-      <a href="events.html">Wine/Bourbon Events</a>
+      <a href="events.html" class="active">Wine/Bourbon Events</a>
       <a href="tell-your-story.html">Tell Your Story</a>
     </nav>
     <div style="display:flex; align-items:center; gap:10px;">
@@ -36,26 +36,17 @@
 <main>
   <section class="page-hero">
     <div class="container">
-      <div class="eyebrow">Sit Back &amp; Sip</div>
-      <h1>Watch <span class="accent">Sum-Bourbon Joe</span></h1>
-      <p>New episodes drop regularly on YouTube — bourbon talk, Detroit stories, and whoever Joe's got sitting in the chair that week.</p>
-      <a class="btn btn-rust" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener" style="margin-top:18px;">Open The Channel &#8250;</a>
+      <div class="eyebrow">Metro Detroit</div>
+      <h1>What's <span class="accent">Pouring Locally?</span></h1>
+      <p>Tastings, pour nights, and bottle releases happening around Macomb County and Metro Detroit. Know about one Joe should list? WhatsApp him.</p>
     </div>
   </section>
 
   <section class="section" style="border-top:none;">
-    <div class="container">
-      <div class="link-card" style="max-width:640px; margin:0 auto;">
-        <span class="icon">&#9654;</span>
-        <span class="body">
-          <div class="title">@SumbourbonJoe on YouTube</div>
-          <div class="desc">Subscribe so you never miss an episode.</div>
-        </span>
-        <a class="btn btn-rust" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener">Watch &#8250;</a>
+    <div class="container" style="max-width:760px;">
+      <div class="feed" id="eventsFeed">
+        <div class="empty-state">Nothing on tap yet &mdash; check back soon, or tell Joe what's happening near you.</div>
       </div>
-      <p style="text-align:center; margin-top:22px; font-size:13px;">
-        Once specific episodes are picked, this page can embed them directly &mdash; for now, every link here points straight to the channel.
-      </p>
     </div>
   </section>
 </main>
@@ -87,5 +78,31 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/supabase-client.js"></script>
 <script src="assets/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const feed = document.getElementById("eventsFeed");
+  const { data, error } = await db
+    .from("sbj_events")
+    .select("*")
+    .order("event_date", { ascending: true });
+  if (error || !data || !data.length) return; // keep the empty state markup
+  const monthFmt = (d) => new Date(d).toLocaleDateString(undefined, { month: "short" });
+  const dayFmt = (d) => new Date(d).getDate();
+  feed.innerHTML = data.map((ev) => `
+    <div class="event-card">
+      <div class="date-block">
+        <div class="month">${ev.event_date ? monthFmt(ev.event_date) : "TBD"}</div>
+        <div class="day">${ev.event_date ? dayFmt(ev.event_date) : "?"}</div>
+      </div>
+      <div>
+        <div class="title">${escapeHtml(ev.title)}</div>
+        <div class="venue">${escapeHtml([ev.venue, ev.city].filter(Boolean).join(" · "))}${ev.event_time ? " · " + escapeHtml(ev.event_time) : ""}</div>
+        ${ev.details ? `<div class="details">${escapeHtml(ev.details)}</div>` : ""}
+        ${ev.link ? `<div class="details"><a href="${ev.link}" target="_blank" rel="noopener" style="color:var(--gold);">More info &#8250;</a></div>` : ""}
+      </div>
+    </div>
+  `).join("");
+});
+</script>
 </body>
 </html>
