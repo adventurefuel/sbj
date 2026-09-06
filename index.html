@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sum-Bourbon Joe | Macomb County. Bourbon. Stories.</title>
+<meta name="description" content="Pull up a chair. Good bourbon, good people, good stories from Sum-Bourbon Joe — Macomb County's bourbon show." />
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html" class="active">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <img class="hero-avatar" src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <div class="eyebrow">Macomb County &bull; Bourbon &bull; Stories</div>
+      <h1>Pull Up <span class="accent">A Chair.</span></h1>
+      <p class="lede">Good bourbon. Good people. Good stories.</p>
+      <div class="rule"></div>
+      <div class="prompt">What brought you here?</div>
+
+      <div class="card-list" style="max-width:640px; margin-left:auto; margin-right:auto; text-align:left;">
+        <a class="link-card" href="tell-your-story.html">
+          <span class="num">01</span>
+          <span class="icon">&#128172;</span>
+          <span class="body">
+            <div class="title">Tell Your Story</div>
+            <div class="desc">Think you belong in the chair? Tell Joe why.</div>
+          </span>
+          <span class="chev">&#8250;</span>
+        </a>
+        <a class="link-card" href="watch.html">
+          <span class="num">02</span>
+          <span class="icon">&#9654;</span>
+          <span class="body">
+            <div class="title">Watch Sum-Bourbon Joe</div>
+            <div class="desc">Catch the latest episodes on YouTube.</div>
+          </span>
+          <span class="chev">&#8250;</span>
+        </a>
+        <a class="link-card" href="bourbon.html">
+          <span class="num">03</span>
+          <span class="icon">&#127866;</span>
+          <span class="body">
+            <div class="title">Bourbon Price Checker</div>
+            <div class="desc">See what that bottle is really going for.</div>
+          </span>
+          <span class="chev">&#8250;</span>
+        </a>
+        <a class="link-card" href="detroit.html">
+          <span class="num">04</span>
+          <span class="icon">&#128197;</span>
+          <span class="body">
+            <div class="title">What's Pouring Locally?</div>
+            <div class="desc">Bourbon events around Metro Detroit.</div>
+          </span>
+          <span class="chev">&#8250;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="head">
+        <div class="eyebrow dim">The Process</div>
+        <h2>Want To Be <span class="accent">On The Show?</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="num">01</span><span>Tell us who you are.</span></div>
+        <div class="step"><span class="num">02</span><span>Tell us what you do.</span></div>
+        <div class="step"><span class="num">03</span><span>Tell us why your story is worth hearing.</span></div>
+        <div class="step"><span class="num">04</span><span>Joe's team will reach out if it's a fit.</span></div>
+      </div>
+
+      <div class="cta-box" style="margin-top:40px;">
+        <div class="copy">
+          <h3>Got Something <span class="accent">Worth Talking About?</span></h3>
+          <p>Business. Fatherhood. Sports. Bourbon. Life. You don't have to be famous&mdash;you need a story.</p>
+        </div>
+        <div class="action">
+          <a class="btn btn-gold" id="waCtaBtn" target="_blank" rel="noopener" style="font-size:14px; padding:14px 24px;">WhatsApp Joe</a>
+          <div class="hint">Opens WhatsApp to message Joe directly.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

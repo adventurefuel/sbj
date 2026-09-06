@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin | Sum-Bourbon Joe</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .panel { max-width: 460px; margin: 70px auto; }
+  .hidden { display: none !important; }
+  .admin-wrap { padding: 40px 0 60px; }
+  .admin-head { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+  .admin-head .who { font-family: var(--font-mono); font-size: 12px; color: var(--cream-dim); }
+  .card-block { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 24px; }
+  .card-block h2 { font-size: 18px; margin-bottom: 4px; }
+  .card-block .desc { color: var(--cream-dim); font-size: 12.5px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align:left; font-family: var(--font-mono); font-size: 10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--cream-dim); padding: 8px 8px; border-bottom: 1px solid var(--line); }
+  td { padding: 8px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  .tbl-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; border: 1px solid var(--line-soft); border-radius: 6px; }
+  input.mini, select.mini { width: 100%; background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 6px 8px; font-size: 12px; border-radius: 6px; }
+  .icon-btn { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--cream-dim); background:none; border:none; cursor:pointer; }
+  .icon-btn:hover { color: var(--rust); }
+  .add-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+  .add-row input, .add-row select { background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 9px 10px; border-radius: 6px; font-size: 13px; flex: 1; min-width: 120px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="main-nav" style="display:flex;">
+      <a href="index.html">Home</a>
+      <a href="#" id="signoutLink" class="hidden">Sign Out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ============ AUTH GATE ============ -->
+  <div id="authGate" class="panel form-panel">
+    <h1 style="font-size:22px;">Admin Sign In</h1>
+    <p style="font-size:13.5px; margin-bottom:20px;">Managing the price sheet, events, and story submissions &mdash; approved admins only.</p>
+    <div id="authMsg"></div>
+
+    <form id="signinForm">
+      <div class="field" style="margin-bottom:14px;"><label>Email</label><input type="email" id="siEmail" required autocomplete="username"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Password</label><input type="password" id="siPassword" required autocomplete="current-password"></div>
+      <button class="btn btn-gold" type="submit" style="width:100%; justify-content:center;">Sign In</button>
+    </form>
+
+    <form id="signupForm" class="hidden">
+      <div class="field" style="margin-bottom:14px;"><label>Email</label><input type="email" id="suEmail" required autocomplete="username"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Create Password</label><input type="password" id="suPassword" required minlength="8" autocomplete="new-password"></div>
+      <button class="btn btn-gold" type="submit" style="width:100%; justify-content:center;">Create Account</button>
+    </form>
+
+    <div style="margin-top:16px; text-align:center; font-size:12.5px; color:var(--cream-dim);">
+      <span id="toggleToSignup">First time here? <button type="button" onclick="showSignup()" style="color:var(--gold); background:none; border:none; text-decoration:underline; cursor:pointer;">Create an account</button></span>
+      <span id="toggleToSignin" class="hidden">Already have an account? <button type="button" onclick="showSignin()" style="color:var(--gold); background:none; border:none; text-decoration:underline; cursor:pointer;">Sign in</button></span>
+    </div>
+  </div>
+
+  <!-- ============ PENDING APPROVAL ============ -->
+  <div id="pendingGate" class="panel form-panel hidden">
+    <h1 style="font-size:22px;">Account Pending Approval</h1>
+    <p style="font-size:13.5px;">You're signed in, but this email isn't on the admin allowlist yet.</p>
+    <div class="msg ok" style="margin-top:12px;">Send this to Tarmale so he can approve you:<br><b id="pendingEmail" style="font-family:var(--font-mono);"></b></div>
+  </div>
+
+  <!-- ============ ADMIN APP ============ -->
+  <div id="adminApp" class="admin-wrap hidden">
+    <div class="admin-head">
+      <h1 style="font-size:26px;">SBJ Admin</h1>
+      <div class="who">Signed in as <b id="whoEmail" style="color:var(--cream);"></b></div>
+    </div>
+
+    <div class="card-block">
+      <h2>Story Submissions</h2>
+      <div class="desc">"Tell Your Story" form entries, newest first.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Contact</th><th>What They Do</th><th>Story</th><th>Status</th><th>Received</th></tr></thead>
+          <tbody id="storiesBody"><tr><td colspan="6">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <h2>What's Pouring Locally &mdash; Events</h2>
+      <div class="desc">Add, edit, or remove events shown on the Detroit page.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Title</th><th>Venue</th><th>City</th><th>Link</th><th></th></tr></thead>
+          <tbody id="eventsBody"><tr><td colspan="6">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+      <div class="add-row">
+        <input type="date" id="newEventDate">
+        <input type="text" id="newEventTitle" placeholder="Event title">
+        <input type="text" id="newEventVenue" placeholder="Venue">
+        <input type="text" id="newEventCity" placeholder="City">
+        <input type="text" id="newEventLink" placeholder="Link (optional)">
+        <button class="btn btn-rust" id="addEventBtn" type="button">Add</button>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <h2>Joe's Price Sheet</h2>
+      <div class="desc">Reference MSRP + secondary-market range used by the bottle lookup on the Bourbon page.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Bottle</th><th>MSRP</th><th>Sec. Low</th><th>Sec. High</th><th></th></tr></thead>
+          <tbody id="sheetBody"><tr><td colspan="5">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+      <div class="add-row">
+        <input type="text" id="newBottleName" placeholder="Bottle name">
+        <input type="number" step="0.01" id="newBottleMsrp" placeholder="MSRP">
+        <input type="number" step="0.01" id="newBottleLow" placeholder="Sec. low">
+        <input type="number" step="0.01" id="newBottleHigh" placeholder="Sec. high">
+        <button class="btn btn-rust" id="addBottleBtn" type="button">Add</button>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <h2>Price Check Log</h2>
+      <div class="desc">Everything the public has submitted on the Bourbon page.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Bottle</th><th>Paid</th><th>MSRP</th><th>Verdict</th><th>Store</th><th>When</th><th></th></tr></thead>
+          <tbody id="checksBody"><tr><td colspan="7">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script>
+function $(id) { return document.getElementById(id); }
+function show(id) { $(id).classList.remove("hidden"); }
+function hide(id) { $(id).classList.add("hidden"); }
+
+function showSignup() { hide("signinForm"); show("signupForm"); hide("toggleToSignup"); show("toggleToSignin"); }
+function showSignin() { show("signinForm"); hide("signupForm"); show("toggleToSignup"); hide("toggleToSignin"); }
+
+let currentSession = null;
+
+async function refreshGate() {
+  const { data } = await db.auth.getSession();
+  currentSession = data.session;
+  if (!currentSession) {
+    hide("pendingGate"); hide("adminApp"); show("authGate"); hide("signoutLink");
+    return;
+  }
+  const { data: adminRow } = await db.from("sbj_admins").select("id").eq("id", currentSession.user.id).maybeSingle();
+  hide("authGate");
+  show("signoutLink");
+  if (!adminRow) {
+    hide("adminApp");
+    $("pendingEmail").textContent = currentSession.user.email;
+    show("pendingGate");
+    return;
+  }
+  hide("pendingGate");
+  $("whoEmail").textContent = currentSession.user.email;
+  show("adminApp");
+  loadStories();
+  loadEvents();
+  loadPriceSheet();
+  loadChecks();
+}
+
+db.auth.onAuthStateChange(() => refreshGate());
+
+$("signinForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("authMsg").innerHTML = "";
+  const { error } = await db.auth.signInWithPassword({ email: $("siEmail").value, password: $("siPassword").value });
+  if (error) $("authMsg").innerHTML = `<div class="msg err">${error.message}</div>`;
+});
+
+$("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("authMsg").innerHTML = "";
+  const { error } = await db.auth.signUp({ email: $("suEmail").value, password: $("suPassword").value });
+  if (error) { $("authMsg").innerHTML = `<div class="msg err">${error.message}</div>`; return; }
+  $("authMsg").innerHTML = `<div class="msg ok">Account created. Signing you in&hellip;</div>`;
+});
+
+$("signoutLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  await db.auth.signOut();
+});
+
+// ---------- Story submissions ----------
+async function loadStories() {
+  const body = $("storiesBody");
+  const { data, error } = await db.from("sbj_story_submissions").select("*").order("created_at", { ascending: false });
+  if (error) { body.innerHTML = `<tr><td colspan="6">Couldn't load submissions.</td></tr>`; return; }
+  if (!data.length) { body.innerHTML = `<tr><td colspan="6">No submissions yet.</td></tr>`; return; }
+  body.innerHTML = data.map((s) => `
+    <tr>
+      <td>${escapeHtml(s.name)}</td>
+      <td>${escapeHtml(s.contact)}</td>
+      <td>${escapeHtml(s.what_you_do || "—")}</td>
+      <td style="max-width:280px;">${escapeHtml(s.story)}</td>
+      <td>
+        <select class="mini status-select" data-id="${s.id}">
+          ${["new","contacted","booked","passed"].map(v => `<option value="${v}" ${s.status===v?"selected":""}>${v}</option>`).join("")}
+        </select>
+      </td>
+      <td>${new Date(s.created_at).toLocaleDateString()}</td>
+    </tr>`).join("");
+  body.querySelectorAll(".status-select").forEach((sel) => {
+    sel.addEventListener("change", async () => {
+      await db.from("sbj_story_submissions").update({ status: sel.value }).eq("id", sel.dataset.id);
+    });
+  });
+}
+
+// ---------- Events ----------
+async function loadEvents() {
+  const body = $("eventsBody");
+  const { data, error } = await db.from("sbj_events").select("*").order("event_date", { ascending: true });
+  if (error) { body.innerHTML = `<tr><td colspan="6">Couldn't load events.</td></tr>`; return; }
+  if (!data.length) { body.innerHTML = `<tr><td colspan="6">No events yet — add one below.</td></tr>`; return; }
+  body.innerHTML = data.map((ev) => `
+    <tr>
+      <td>${ev.event_date || "TBD"}</td>
+      <td>${escapeHtml(ev.title)}</td>
+      <td>${escapeHtml(ev.venue || "—")}</td>
+      <td>${escapeHtml(ev.city || "—")}</td>
+      <td>${ev.link ? `<a href="${ev.link}" target="_blank" rel="noopener" style="color:var(--gold);">link</a>` : "—"}</td>
+      <td><button class="icon-btn del-event" data-id="${ev.id}">Remove</button></td>
+    </tr>`).join("");
+  body.querySelectorAll(".del-event").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await db.from("sbj_events").delete().eq("id", btn.dataset.id);
+      loadEvents();
+    });
+  });
+}
+
+$("addEventBtn").addEventListener("click", async () => {
+  const title = $("newEventTitle").value.trim();
+  if (!title) return;
+  await db.from("sbj_events").insert({
+    title,
+    event_date: $("newEventDate").value || null,
+    venue: $("newEventVenue").value.trim() || null,
+    city: $("newEventCity").value.trim() || null,
+    link: $("newEventLink").value.trim() || null,
+  });
+  ["newEventDate","newEventTitle","newEventVenue","newEventCity","newEventLink"].forEach(id => $(id).value = "");
+  loadEvents();
+});
+
+// ---------- Price sheet ----------
+async function loadPriceSheet() {
+  const body = $("sheetBody");
+  const { data, error } = await db.from("sbj_price_sheet").select("*").order("bottle_name", { ascending: true });
+  if (error) { body.innerHTML = `<tr><td colspan="5">Couldn't load the price sheet.</td></tr>`; return; }
+  body.innerHTML = data.map((p) => `
+    <tr>
+      <td>${escapeHtml(p.bottle_name)}</td>
+      <td>${Number(p.msrp).toFixed(2)}</td>
+      <td>${p.secondary_low != null ? Number(p.secondary_low).toFixed(2) : "—"}</td>
+      <td>${p.secondary_high != null ? Number(p.secondary_high).toFixed(2) : "—"}</td>
+      <td><button class="icon-btn del-bottle" data-id="${p.id}">Remove</button></td>
+    </tr>`).join("");
+  body.querySelectorAll(".del-bottle").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await db.from("sbj_price_sheet").delete().eq("id", btn.dataset.id);
+      loadPriceSheet();
+    });
+  });
+}
+
+$("addBottleBtn").addEventListener("click", async () => {
+  const bottleName = $("newBottleName").value.trim();
+  const msrp = parseFloat($("newBottleMsrp").value);
+  if (!bottleName || !Number.isFinite(msrp)) return;
+  const low = $("newBottleLow").value ? parseFloat($("newBottleLow").value) : null;
+  const high = $("newBottleHigh").value ? parseFloat($("newBottleHigh").value) : null;
+  await db.from("sbj_price_sheet").upsert(
+    { bottle_name: bottleName, msrp, secondary_low: low, secondary_high: high },
+    { onConflict: "bottle_name" }
+  );
+  ["newBottleName","newBottleMsrp","newBottleLow","newBottleHigh"].forEach(id => $(id).value = "");
+  loadPriceSheet();
+});
+
+// ---------- Price check log ----------
+async function loadChecks() {
+  const body = $("checksBody");
+  const { data, error } = await db.from("sbj_price_checks").select("*").order("created_at", { ascending: false }).limit(100);
+  if (error) { body.innerHTML = `<tr><td colspan="7">Couldn't load the log.</td></tr>`; return; }
+  if (!data.length) { body.innerHTML = `<tr><td colspan="7">No entries yet.</td></tr>`; return; }
+  body.innerHTML = data.map((c) => `
+    <tr>
+      <td>${escapeHtml(c.bottle_name)}</td>
+      <td>$${Number(c.price_paid).toFixed(2)}</td>
+      <td>${c.msrp != null ? "$" + Number(c.msrp).toFixed(2) : "—"}</td>
+      <td>${escapeHtml(c.verdict)}</td>
+      <td>${escapeHtml(c.store || "—")}</td>
+      <td>${new Date(c.created_at).toLocaleDateString()}</td>
+      <td><button class="icon-btn del-check" data-id="${c.id}">Remove</button></td>
+    </tr>`).join("");
+  body.querySelectorAll(".del-check").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await db.from("sbj_price_checks").delete().eq("id", btn.dataset.id);
+      loadChecks();
+    });
+  });
+}
+
+refreshGate();
+</script>
+</body>
+</html>

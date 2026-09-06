@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tell Your Story | Sum-Bourbon Joe</title>
+<meta name="description" content="Think you belong in the chair? Tell Joe why." />
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html" class="active">Tell Your Story</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="eyebrow">Want To Be On The Show?</div>
+      <h1>Tell Your <span class="accent">Story</span></h1>
+      <p>Business. Fatherhood. Sports. Bourbon. Life. You don't have to be famous — you need a story. Fill this out and Joe's team will reach out if it's a fit.</p>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:none;">
+    <div class="container" style="max-width:680px;">
+      <div class="form-panel">
+        <div class="form-head"><span>Who Are You?</span></div>
+
+        <form id="storyForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" placeholder="e.g. Joe Smith" required />
+            </div>
+            <div class="field">
+              <label for="contact">Phone or Email</label>
+              <input type="text" id="contact" placeholder="So Joe's team can reach you" required />
+            </div>
+            <div class="field full">
+              <label for="whatYouDo">What Do You Do?</label>
+              <input type="text" id="whatYouDo" placeholder="e.g. own a shop in Macomb County, coach travel ball, run a bourbon club" />
+            </div>
+            <div class="field full">
+              <label for="story">Why Is Your Story Worth Hearing?</label>
+              <textarea id="story" placeholder="Give Joe the short version — what's the story, and why should it be in the chair?" required></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-rust">Send It To Joe</button>
+            <span class="msg" id="formMsg"></span>
+          </div>
+        </form>
+      </div>
+
+      <p style="text-align:center; margin-top:28px; font-size:14px;">
+        Rather just message him directly?
+        <a id="waStoryLink" href="#" target="_blank" rel="noopener" style="color:var(--gold);">WhatsApp Joe</a> instead.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const waStoryLink = document.getElementById("waStoryLink");
+  if (waStoryLink) waStoryLink.href = waLink("Hey Joe, I've got a story for the show.");
+
+  const form = document.getElementById("storyForm");
+  const formMsg = document.getElementById("formMsg");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    formMsg.textContent = "";
+    formMsg.className = "msg";
+
+    const name = document.getElementById("name").value.trim();
+    const contact = document.getElementById("contact").value.trim();
+    const whatYouDo = document.getElementById("whatYouDo").value.trim();
+    const story = document.getElementById("story").value.trim();
+
+    if (!name || !contact || !story) {
+      formMsg.textContent = "Fill in your name, contact info, and your story.";
+      formMsg.className = "msg err";
+      return;
+    }
+
+    const submitBtn = form.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+
+    const { error } = await db.from("sbj_story_submissions").insert({
+      name, contact, what_you_do: whatYouDo || null, story,
+    });
+
+    submitBtn.disabled = false;
+
+    if (error) {
+      formMsg.textContent = "Couldn't send that — try again in a moment.";
+      formMsg.className = "msg err";
+      return;
+    }
+
+    form.reset();
+    formMsg.textContent = "Sent. Joe's team will reach out if it's a fit.";
+    formMsg.className = "msg ok";
+  });
+});
+</script>
+</body>
+</html>

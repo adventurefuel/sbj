@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Joe's Price Check | Sum-Bourbon Joe</title>
+<meta name="description" content="Tell Joe what you paid for that bottle — he'll tell you straight whether you scored or got taken." />
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html" class="active">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container" style="display:flex; align-items:center; gap:24px; text-align:left; justify-content:center; flex-wrap:wrap;">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" style="width:110px; height:110px; border-radius:50%; border:4px solid var(--rust); object-fit:cover;" />
+      <div style="max-width:520px;">
+        <div class="eyebrow">Joe's Price Check</div>
+        <h1 style="text-align:left; font-size:clamp(32px,6vw,56px);">Sum-<span class="accent">Bourbon</span></h1>
+        <p style="text-align:left; margin-top:10px;"><strong style="color:var(--cream);">Price Check</strong> &mdash; tell Joe what you paid, he'll tell you straight whether you scored or got taken. Your log sticks around next time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:none; padding-top:36px;">
+    <div class="container" style="max-width:760px;">
+
+      <div class="form-panel">
+        <div class="form-head">
+          <span>Tell Joe What You Paid</span>
+        </div>
+
+        <form id="priceForm">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="bottleName">Bottle Name</label>
+              <input type="text" id="bottleName" placeholder="e.g. Blanton's Original Single Barrel" autocomplete="off" required />
+              <div class="hint-line" id="bottleHint"></div>
+            </div>
+            <div class="field">
+              <label for="pricePaid">What You Paid ($)</label>
+              <input type="number" id="pricePaid" placeholder="64.99" step="0.01" min="0" required />
+            </div>
+            <div class="field">
+              <label for="size">Size</label>
+              <select id="size">
+                <option value="750ml" selected>750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.75L">1.75L</option>
+                <option value="375ml">375ml</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="msrpOverride">MSRP ($, optional override)</label>
+              <input type="number" id="msrpOverride" placeholder="auto-filled if known" step="0.01" min="0" />
+            </div>
+            <div class="field">
+              <label for="store">Store / Source</label>
+              <input type="text" id="store" placeholder="e.g. local shop, secondary market" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-rust">Add To Log</button>
+            <span class="msg" id="formMsg"></span>
+          </div>
+        </form>
+
+        <details class="price-sheet-toggle">
+          <summary>Show Joe's price sheet &#9662;</summary>
+          <div id="priceSheetWrap">
+            <table class="price-sheet-table">
+              <thead>
+                <tr><th>Bottle</th><th>MSRP</th><th>Secondary Range</th></tr>
+              </thead>
+              <tbody id="priceSheetBody">
+                <tr><td colspan="3">Loading Joe's price sheet&hellip;</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+
+      <div style="margin-top:40px;">
+        <div class="eyebrow dim" style="text-align:left;">Joe's Verdicts</div>
+        <div class="feed" id="verdictFeed">
+          <div class="empty-state">Nothing on the shelf yet &mdash; add your first bottle and Joe will size it up.</div>
+        </div>
+      </div>
+
+      <p class="disclaimer">Joe's price sheet is typical U.S. MSRP and known secondary-market range. It varies by state, store, and allocation. Not financial advice &mdash; just Joe's take.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/bourbon.js"></script>
+</body>
+</html>

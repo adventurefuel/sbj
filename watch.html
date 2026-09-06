@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Watch | Sum-Bourbon Joe</title>
+<meta name="description" content="Catch the latest episodes of Sum-Bourbon Joe on YouTube." />
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="watch.html" class="active">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="eyebrow">Sit Back &amp; Sip</div>
+      <h1>Watch <span class="accent">Sum-Bourbon Joe</span></h1>
+      <p>New episodes drop regularly on YouTube — bourbon talk, Detroit stories, and whoever Joe's got sitting in the chair that week.</p>
+      <a class="btn btn-rust" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener" style="margin-top:18px;">Open The Channel &#8250;</a>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:none;">
+    <div class="container">
+      <div class="link-card" style="max-width:640px; margin:0 auto;">
+        <span class="icon">&#9654;</span>
+        <span class="body">
+          <div class="title">@SumbourbonJoe on YouTube</div>
+          <div class="desc">Subscribe so you never miss an episode.</div>
+        </span>
+        <a class="btn btn-rust" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener">Watch &#8250;</a>
+      </div>
+      <p style="text-align:center; margin-top:22px; font-size:13px;">
+        Once specific episodes are picked, this page can embed them directly &mdash; for now, every link here points straight to the channel.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="detroit.html">Detroit</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>
