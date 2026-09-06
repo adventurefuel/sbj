@@ -88,7 +88,7 @@ function renderVerdictCard(row) {
         <span class="paid">${money(row.price_paid)}${row.msrp != null ? ` &middot; MSRP ${money(row.msrp)}` : ""}</span>
       </div>
       <div class="verdict-text">${escapeHtml(row.verdict_detail || row.verdict)}</div>
-      <div class="meta">${escapeHtml(metaParts.join(" &middot; "))}</div>
+      <div class="meta">${escapeHtml(metaParts.join(" · "))}</div>
     </div>`;
 }
 
