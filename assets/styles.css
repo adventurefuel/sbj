@@ -110,6 +110,7 @@ p { color: var(--cream-dim); }
 }
 
 .brand .accent { color: var(--gold); }
+.brand-short { display: none; }
 
 nav.main-nav {
   display: flex;
@@ -715,6 +716,8 @@ details.price-sheet-toggle summary:hover { color: var(--gold); }
   .form-grid { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: 1fr; }
   .cta-box { flex-direction: column; text-align: center; }
+  .brand-full { display: none; }
+  .brand-short { display: inline; }
 }
 
 nav.main-nav.mobile-open {
