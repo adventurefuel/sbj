@@ -13,11 +13,15 @@ backend, deployed on Render as a static site.
 - `index.html` — landing page. Hero, the four "what brought you here" cards
   (Tell Your Story / Watch / Bourbon Price Checker / What's Pouring
   Locally), the "want to be on the show" steps, and the WhatsApp CTA box.
-- `bourbon.html` — **Joe's Price Check**. Same approach as
-  adventurefuel.agency/sbj: type a bottle name, Joe looks it up against his
-  seeded price sheet and shows the known MSRP/secondary range, you log what
-  you paid, and it computes a verdict (scored / fair / got taken) that's
-  added to the public "Joe's Verdicts" feed.
+- `bourbon.html` — **Sum-Bourbon Joe Price Check**. Type a bottle name, Joe
+  looks it up against his seeded price sheet and shows the known
+  MSRP/secondary range, you log what you paid, and it computes a verdict in
+  Joe's voice ("Joe says: Score" / "Fair Play" / "Overpaid" / "Ouch" /
+  "Logged") that's added to the public "Joe's Verdicts" feed. Uses its own
+  comic-badge theme (`assets/bourbon-badge.css`, loaded only on this page) —
+  mustard gold / brick red / warm brown, black-outline badge cards and
+  buttons, Luckiest Guy display type, Baloo 2 body type — layered on top of
+  the shared dark styles without touching them.
 - `events.html` — **Wine/Bourbon Events** ("What's Pouring Locally?"). Reads
   events from Supabase; launches empty with a friendly placeholder until
   real events are added. (Was `detroit.html` — `_redirects` forwards the
@@ -35,6 +39,8 @@ backend, deployed on Render as a static site.
 - `assets/site.js` — shared nav/footer behavior (mobile menu, WhatsApp
   links, socials, year).
 - `assets/bourbon.js` — price-checker logic.
+- `assets/bourbon-badge.css` — page-scoped badge theme for `bourbon.html`
+  only (everything nested under `body.page-bourbon`).
 
 ## Supabase project
 
@@ -56,7 +62,10 @@ Supabase dashboard for the exact SQL):
 - `public.sbj_admins` — allowlist of `auth.users.id` who may manage SBJ
   content. Starts **empty** — see "First-time admin setup" below.
 - `public.sbj_price_sheet` — bottle_name, msrp, secondary_low/high, notes.
-  Public read; admin-only write. Seeded with the bottles from Joe's logo.
+  Public read; admin-only write. Seeded with the bottles from Joe's logo,
+  since expanded with real Michigan Liquor Control Commission minimum
+  shelf prices for several bottles (see `notes` per row — sourced via
+  liquorli.st, which mirrors the official MLCC Price Book).
 - `public.sbj_price_checks` — the public "Joe's Verdicts" log. Public read
   and insert (with basic sanity checks); admin-only delete.
 - `public.sbj_events` — "What's Pouring Locally" events. Public read;

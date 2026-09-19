@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Joe's Price Check | Sum-Bourbon Joe</title>
-<meta name="description" content="Tell Joe what you paid for that bottle — he'll tell you straight whether you scored or got taken." />
+<title>Sum-Bourbon Joe Price Check</title>
+<meta name="description" content="Tell Joe what you paid for that bottle — he'll tell you straight whether you scored, played it fair, or got taken." />
 <link rel="icon" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Luckiest+Guy&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/bourbon-badge.css" />
 </head>
-<body>
+<body class="page-bourbon">
 
 <header class="site-header">
   <div class="container">
@@ -37,11 +38,11 @@
 <main>
   <section class="page-hero">
     <div class="container" style="display:flex; align-items:center; gap:24px; text-align:left; justify-content:center; flex-wrap:wrap;">
-      <img src="assets/logo.png" alt="Sum-Bourbon Joe" style="width:110px; height:110px; border-radius:50%; border:4px solid var(--rust); object-fit:cover;" />
-      <div style="max-width:520px;">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" class="mascot-badge" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--rust); object-fit:cover;" />
+      <div style="max-width:560px;">
         <div class="eyebrow">Joe's Price Check</div>
-        <h1 style="text-align:left; font-size:clamp(32px,6vw,56px);">Sum-<span class="accent">Bourbon</span></h1>
-        <p style="text-align:left; margin-top:10px;"><strong style="color:var(--cream);">Price Check</strong> &mdash; tell Joe what you paid, he'll tell you straight whether you scored or got taken. Your log sticks around next time.</p>
+        <h1 style="text-align:left; font-size:clamp(30px,6vw,52px);">Sum-Bourbon <span class="accent">Joe</span><br>Price Check</h1>
+        <p style="text-align:left; margin-top:10px;">Tell Joe what you paid for that bottle &mdash; he'll tell you straight whether you scored, played it fair, or got taken. Your log sticks around next time.</p>
       </div>
     </div>
   </section>
@@ -58,7 +59,7 @@
           <div class="form-grid">
             <div class="field full">
               <label for="bottleName">Bottle Name</label>
-              <input type="text" id="bottleName" placeholder="e.g. Blanton's Original Single Barrel" autocomplete="off" required />
+              <input type="text" id="bottleName" placeholder="e.g. Blanton's Single Barrel" autocomplete="off" required />
               <div class="hint-line" id="bottleHint"></div>
             </div>
             <div class="field">
@@ -86,7 +87,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="btn btn-rust">Add To Log</button>
+            <button type="submit" class="btn btn-rust">Tell Joe</button>
             <span class="msg" id="formMsg"></span>
           </div>
         </form>
@@ -109,11 +110,11 @@
       <div style="margin-top:40px;">
         <div class="eyebrow dim" style="text-align:left;">Joe's Verdicts</div>
         <div class="feed" id="verdictFeed">
-          <div class="empty-state">Nothing on the shelf yet &mdash; add your first bottle and Joe will size it up.</div>
+          <div class="empty-state">Nothing on the shelf yet &mdash; tell Joe what you paid and he'll size it up.</div>
         </div>
       </div>
 
-      <p class="disclaimer">Joe's price sheet is typical U.S. MSRP and known secondary-market range. It varies by state, store, and allocation. Not financial advice &mdash; just Joe's take.</p>
+      <p class="disclaimer">Where noted, MSRP is the official Michigan Liquor Control Commission minimum shelf price (before the 6% sales tax retailers add). Everything else is typical U.S. MSRP and known secondary-market range &mdash; it varies by state, store, and allocation. Not financial advice, just Joe's take.</p>
     </div>
   </section>
 </main>
