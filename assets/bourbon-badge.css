@@ -1,0 +1,181 @@
+/* ============================================================
+   SUM-BOURBON JOE — "Joe's Price Check" badge theme
+   Page-scoped: every rule here is nested under body.page-bourbon,
+   so it only ever applies on bourbon.html. Loaded AFTER styles.css.
+
+   Trick: styles.css components already read the shared custom
+   properties (--gold, --rust, --ink, --panel, --font-display, ...).
+   Re-declaring those properties on body.page-bourbon re-points every
+   component at Joe's comic-badge palette/type without touching
+   styles.css or any other page.
+   ============================================================ */
+
+body.page-bourbon {
+  --jb-outline: #17110b;
+
+  /* mustard gold / brick red / warm brown, black outlines */
+  --ink: #1c130c;
+  --ink-2: #241a10;
+  --panel: #2c2013;
+  --panel-2: #372715;
+  --line: #4a3520;
+  --line-soft: #3a2a18;
+  --cream: #fbf1dd;
+  --cream-dim: #e3cfa8;
+  --gold: #eaad33;
+  --gold-2: #d89722;
+  --rust: #c1432e;
+  --rust-2: #a3351f;
+  --green-ok: #7cb35a;
+  --red-bad: #c1432e;
+
+  --font-display: "Luckiest Guy", "Anton", Impact, sans-serif;
+  --font-body: "Baloo 2", "Archivo", sans-serif;
+
+  --radius: 18px;
+
+  background: var(--ink);
+  background-image:
+    radial-gradient(ellipse at 12% 6%, rgba(234, 173, 51, 0.12), transparent 50%),
+    radial-gradient(ellipse at 92% 92%, rgba(193, 67, 46, 0.14), transparent 55%);
+}
+
+/* Poster-comic headlines */
+body.page-bourbon h1,
+body.page-bourbon h2,
+body.page-bourbon h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+body.page-bourbon .page-hero h1 {
+  -webkit-text-stroke: 1px var(--jb-outline);
+  text-shadow: 3px 3px 0 var(--jb-outline);
+}
+
+/* UI text (nav, labels, buttons, meta) moves from mono to rounded Baloo 2 */
+body.page-bourbon .eyebrow,
+body.page-bourbon nav.main-nav,
+body.page-bourbon .btn,
+body.page-bourbon .field label,
+body.page-bourbon .form-panel .form-head,
+body.page-bourbon details.price-sheet-toggle summary,
+body.page-bourbon .price-sheet-table th,
+body.page-bourbon .verdict-card .bottle,
+body.page-bourbon .verdict-card .paid,
+body.page-bourbon .verdict-card .meta,
+body.page-bourbon .msg,
+body.page-bourbon .footer-nav,
+body.page-bourbon .copyright,
+body.page-bourbon .powered-by,
+body.page-bourbon .disclaimer {
+  font-family: "Baloo 2", var(--font-body);
+  font-weight: 600;
+}
+
+/* ---------- Mascot badges (header + footer + hero) ---------- */
+
+body.page-bourbon .brand img,
+body.page-bourbon .footer-brand img {
+  border: 3px solid var(--jb-outline);
+  box-shadow: 0 0 0 3px var(--gold);
+}
+
+body.page-bourbon .site-header {
+  background: rgba(28, 19, 12, 0.94);
+  border-bottom-color: var(--line-soft);
+}
+
+body.page-bourbon nav.main-nav a.active { border-bottom-color: var(--gold); }
+
+body.page-bourbon .page-hero .mascot-badge {
+  border: 4px solid var(--jb-outline) !important;
+  box-shadow: 0 0 0 5px var(--gold), 5px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Chunky rounded badge buttons ---------- */
+
+body.page-bourbon .btn {
+  border-radius: 999px;
+  border: 3px solid var(--jb-outline);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 0 var(--jb-outline);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+body.page-bourbon .btn:hover { transform: translateY(-1px); }
+body.page-bourbon .btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--jb-outline);
+}
+body.page-bourbon .btn-gold { background: var(--gold); color: #241505; }
+body.page-bourbon .btn-rust { background: var(--rust); color: var(--cream); }
+
+/* ---------- Badge cards: form panel, verdict cards, events ---------- */
+
+body.page-bourbon .form-panel,
+body.page-bourbon .verdict-card,
+body.page-bourbon .event-card {
+  border: 3px solid var(--jb-outline);
+  border-radius: var(--radius);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+body.page-bourbon .form-panel .form-head {
+  border-bottom: 2px dashed var(--line);
+  font-size: 14px;
+}
+
+body.page-bourbon .verdict-card { border-left-width: 3px; }
+body.page-bourbon .verdict-card.scored { border-color: var(--green-ok); }
+body.page-bourbon .verdict-card.fair { border-color: var(--gold); }
+body.page-bourbon .verdict-card.overpaid { border-color: #d9772c; }
+body.page-bourbon .verdict-card.ouch { border-color: var(--rust); }
+body.page-bourbon .verdict-card.logged { border-color: var(--line); }
+
+/* "JOE SAYS: ___" stamp badge inside each verdict card */
+body.page-bourbon .joe-says {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  font-size: 13px;
+  padding: 5px 14px 3px;
+  border-radius: 999px;
+  border: 2px solid var(--jb-outline);
+  text-transform: uppercase;
+  color: var(--jb-outline);
+  margin-bottom: 8px;
+}
+body.page-bourbon .verdict-card.scored .joe-says { background: var(--green-ok); }
+body.page-bourbon .verdict-card.fair .joe-says { background: var(--gold); }
+body.page-bourbon .verdict-card.overpaid .joe-says { background: #d9772c; color: var(--cream); }
+body.page-bourbon .verdict-card.ouch .joe-says { background: var(--rust); color: var(--cream); }
+body.page-bourbon .verdict-card.logged .joe-says { background: var(--panel-2); color: var(--cream-dim); border-color: var(--line); }
+
+/* ---------- Form fields ---------- */
+
+body.page-bourbon .field input,
+body.page-bourbon .field select,
+body.page-bourbon .field textarea {
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  font-family: var(--font-body);
+}
+body.page-bourbon .field input:focus,
+body.page-bourbon .field select:focus,
+body.page-bourbon .field textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(234, 173, 51, 0.2);
+}
+
+body.page-bourbon .price-sheet-table th,
+body.page-bourbon .price-sheet-table td {
+  border-bottom-color: var(--line);
+}
+body.page-bourbon .price-sheet-table .sheet-note { color: var(--cream-dim); }
+
+body.page-bourbon .empty-state { font-family: var(--font-body); }
+
+@media (max-width: 860px) {
+  body.page-bourbon nav.main-nav.mobile-open { background: var(--ink); }
+}

@@ -1,9 +1,26 @@
 // SUM-BOURBON JOE — Joe's Price Check page logic.
 // Looks up bottles against Joe's seeded price sheet, lets people log what
-// they paid, computes a plain-English verdict, and stores/reads the public
-// "Joe's Verdicts" feed from Supabase (table: sbj_price_checks).
+// they paid, computes a verdict in Joe's own voice, and stores/reads the
+// public "Joe's Verdicts" feed from Supabase (table: sbj_price_checks).
 
 let priceSheet = [];
+
+// Every verdict tier Joe hands out, keyed by the value stored in the
+// `verdict` column. Legacy rows (from before the badge redesign) used
+// "taken" for anything over MSRP — mapped onto "overpaid" so old entries
+// still render correctly.
+const VERDICT_META = {
+  scored: { cls: "scored", label: "Joe says: Score" },
+  fair: { cls: "fair", label: "Joe says: Fair Play" },
+  overpaid: { cls: "overpaid", label: "Joe says: Overpaid" },
+  ouch: { cls: "ouch", label: "Joe says: Ouch" },
+  taken: { cls: "overpaid", label: "Joe says: Overpaid" }, // legacy
+  logged: { cls: "logged", label: "Joe says: Logged" },
+};
+
+function verdictMeta(key) {
+  return VERDICT_META[key] || VERDICT_META.logged;
+}
 
 function normalizeName(s) {
   return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
@@ -16,7 +33,7 @@ function findSheetMatch(name) {
   let hit = priceSheet.find((p) => p.bottle_name_norm === norm);
   if (hit) return hit;
   // Otherwise, substring match either direction (handles "Blanton's" vs
-  // "Blanton's Original Single Barrel").
+  // "Blanton's Single Barrel").
   hit = priceSheet.find(
     (p) => p.bottle_name_norm.includes(norm) || norm.includes(p.bottle_name_norm)
   );
@@ -31,30 +48,32 @@ function computeVerdict(paid, msrp, secLow, secHigh) {
   if (msrp == null) {
     return {
       verdict: "logged",
-      cls: "fair",
       text: "Joe doesn't have this one priced yet — logged for the record. WhatsApp him if you want his take.",
     };
   }
   if (paid <= msrp * 1.1) {
     return {
       verdict: "scored",
-      cls: "scored",
       text: `You scored — that's right around MSRP (${money(msrp)}).`,
     };
   }
   if (secHigh != null && paid <= secHigh * 1.05) {
     return {
       verdict: "fair",
-      cls: "fair",
-      text: `Fair price for secondary market — that's within the going range (${money(secLow ?? msrp)}–${money(secHigh)}).`,
+      text: `Fair play for secondary market — that's within the going range (${money(secLow ?? msrp)}–${money(secHigh)}).`,
+    };
+  }
+  if (secHigh != null && paid <= secHigh * 1.5) {
+    return {
+      verdict: "overpaid",
+      text: `You got overpaid on this one — that's above the usual secondary-market range (up to ${money(secHigh)}).`,
     };
   }
   return {
-    verdict: "taken",
-    cls: "taken",
+    verdict: "ouch",
     text: secHigh != null
-      ? `You got taken — that's above the usual secondary-market range (up to ${money(secHigh)}).`
-      : `You got taken — that's well above MSRP (${money(msrp)}).`,
+      ? `Ouch — that's well above even the secondary-market range (up to ${money(secHigh)}). Joe feels for you.`
+      : `Ouch — that's well above MSRP (${money(msrp)}). Joe feels for you.`,
   };
 }
 
@@ -72,22 +91,24 @@ function renderPriceSheetTable() {
       const range = p.secondary_low != null && p.secondary_high != null
         ? `${money(p.secondary_low)}–${money(p.secondary_high)}`
         : "—";
-      return `<tr><td>${escapeHtml(p.bottle_name)}</td><td>${money(p.msrp)}</td><td>${range}</td></tr>`;
+      const noteLine = p.notes ? `<div class="sheet-note">${escapeHtml(p.notes)}</div>` : "";
+      return `<tr><td>${escapeHtml(p.bottle_name)}${noteLine}</td><td>${money(p.msrp)}</td><td>${range}</td></tr>`;
     })
     .join("");
 }
 
 function renderVerdictCard(row) {
-  const cls = row.verdict === "scored" ? "scored" : row.verdict === "taken" ? "taken" : "fair";
+  const meta = verdictMeta(row.verdict);
   const when = new Date(row.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
   const metaParts = [row.size, row.store, when].filter(Boolean);
   return `
-    <div class="verdict-card ${cls}">
+    <div class="verdict-card ${meta.cls}">
+      <span class="joe-says">${meta.label}</span>
       <div class="row1">
         <span class="bottle">${escapeHtml(row.bottle_name)}</span>
-        <span class="paid">${money(row.price_paid)}${row.msrp != null ? ` &middot; MSRP ${money(row.msrp)}` : ""}</span>
+        <span class="paid">${money(row.price_paid)}${row.msrp != null ? ` · MSRP ${money(row.msrp)}` : ""}</span>
       </div>
-      <div class="verdict-text">${escapeHtml(row.verdict_detail || row.verdict)}</div>
+      <div class="verdict-text">${escapeHtml(row.verdict_detail || meta.label)}</div>
       <div class="meta">${escapeHtml(metaParts.join(" · "))}</div>
     </div>`;
 }
@@ -95,7 +116,7 @@ function renderVerdictCard(row) {
 async function loadPriceSheet() {
   const { data, error } = await db
     .from("sbj_price_sheet")
-    .select("bottle_name, bottle_name_norm, msrp, secondary_low, secondary_high")
+    .select("bottle_name, bottle_name_norm, msrp, secondary_low, secondary_high, notes")
     .order("bottle_name", { ascending: true });
   if (!error && data) {
     priceSheet = data;
@@ -113,7 +134,7 @@ async function loadVerdicts() {
     .limit(25);
   if (error) return;
   if (!data || !data.length) {
-    feed.innerHTML = `<div class="empty-state">Nothing on the shelf yet &mdash; add your first bottle and Joe will size it up.</div>`;
+    feed.innerHTML = `<div class="empty-state">Nothing on the shelf yet &mdash; tell Joe what you paid and he'll size it up.</div>`;
     return;
   }
   feed.innerHTML = data.map(renderVerdictCard).join("");
@@ -192,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    formMsg.textContent = "Added to the log.";
+    formMsg.textContent = "Added to Joe's log.";
     formMsg.className = "msg ok";
     form.reset();
     hint.textContent = "";

@@ -612,6 +612,13 @@ details.price-sheet-toggle summary:hover { color: var(--gold); }
   color: var(--cream-dim);
 }
 
+.price-sheet-table .sheet-note {
+  font-size: 11px;
+  color: var(--cream-dim);
+  font-style: italic;
+  margin-top: 2px;
+}
+
 /* ---------- Verdict feed / cards ---------- */
 
 .feed { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
