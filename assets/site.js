@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
     el.href = waLink(msg);
   });
 
+  // Any link-card (or other element) that wants to point at a social
+  // profile: set data-social="instagram" / "facebook" / etc. and this
+  // fills in the href from the shared SOCIALS config, so the URL only
+  // ever needs to change in one place (assets/supabase-client.js).
+  document.querySelectorAll("[data-social]").forEach((el) => {
+    const href = SOCIALS[el.getAttribute("data-social")];
+    if (href && href !== "#") el.href = href;
+  });
+
   // Footer social icons.
   const footerSocial = document.getElementById("footerSocial");
   if (footerSocial) {
