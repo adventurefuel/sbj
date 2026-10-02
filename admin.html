@@ -28,6 +28,21 @@
   .icon-btn:hover { color: var(--rust); }
   .add-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
   .add-row input, .add-row select { background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 9px 10px; border-radius: 6px; font-size: 13px; flex: 1; min-width: 120px; }
+
+  .stat-tiles { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+  .stat-tile { flex:1; min-width:110px; background: var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .stat-tile .num { font-family: var(--font-display); font-size:28px; color: var(--gold); line-height:1.1; }
+  .stat-tile .lbl { font-family: var(--font-mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--cream-dim); margin-top:4px; }
+  .analytics-grid { display:grid; grid-template-columns: 1fr 1fr; gap:26px; }
+  @media (max-width: 760px) { .analytics-grid { grid-template-columns: 1fr; } }
+  .analytics-grid h3 { font-family: var(--font-mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color: var(--cream-dim); margin-bottom:10px; font-weight:600; }
+  .bar-list { display:flex; flex-direction:column; gap:7px; }
+  .bar-row { display:flex; align-items:center; gap:10px; }
+  .bar-row .bl-label { width:108px; flex-shrink:0; color: var(--cream-dim); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-row .bl-track { flex:1; background: var(--ink-2); border-radius:4px; height:14px; overflow:hidden; }
+  .bar-row .bl-fill { height:100%; background: var(--gold); border-radius:4px; min-width:3px; }
+  .bar-row .bl-val { width:36px; text-align:right; color: var(--cream); font-family: var(--font-mono); font-size:11.5px; flex-shrink:0; }
+  .bar-empty { color: var(--cream-dim); font-size:12.5px; }
 </style>
 </head>
 <body>
@@ -84,6 +99,41 @@
     <div class="admin-head">
       <h1 style="font-size:26px;">SBJ Admin</h1>
       <div class="who">Signed in as <b id="whoEmail" style="color:var(--cream);"></b></div>
+    </div>
+
+    <div class="card-block">
+      <h2>Site Analytics</h2>
+      <div class="desc">Pageviews across the whole site &mdash; logged client-side to this project's own Supabase table. No third-party tracker, no cookies.</div>
+
+      <div class="stat-tiles">
+        <div class="stat-tile"><div class="num" id="statToday">&mdash;</div><div class="lbl">Today</div></div>
+        <div class="stat-tile"><div class="num" id="stat7">&mdash;</div><div class="lbl">Last 7 Days</div></div>
+        <div class="stat-tile"><div class="num" id="stat30">&mdash;</div><div class="lbl">Last 30 Days</div></div>
+        <div class="stat-tile"><div class="num" id="statAll">&mdash;</div><div class="lbl">All-Time</div></div>
+      </div>
+
+      <div class="analytics-grid">
+        <div>
+          <h3>Views By Page &middot; Last 30 Days</h3>
+          <div class="bar-list" id="barsByPage"><div class="bar-empty">Loading&hellip;</div></div>
+        </div>
+        <div>
+          <h3>Daily Trend &middot; Last 14 Days</h3>
+          <div class="bar-list" id="barsByDay"><div class="bar-empty">Loading&hellip;</div></div>
+        </div>
+        <div>
+          <h3>Top Referrers &middot; Last 30 Days</h3>
+          <div class="bar-list" id="barsByReferrer"><div class="bar-empty">Loading&hellip;</div></div>
+        </div>
+        <div>
+          <h3>Device &middot; Last 30 Days</h3>
+          <div class="bar-list" id="barsByDevice"><div class="bar-empty">Loading&hellip;</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px; text-align:right;">
+        <button class="icon-btn" id="clearAnalyticsBtn" type="button">Clear Log</button>
+      </div>
     </div>
 
     <div class="card-block">
@@ -178,6 +228,7 @@ async function refreshGate() {
   hide("pendingGate");
   $("whoEmail").textContent = currentSession.user.email;
   show("adminApp");
+  loadAnalytics();
   loadStories();
   loadEvents();
   loadPriceSheet();
@@ -204,6 +255,130 @@ $("signupForm").addEventListener("submit", async (e) => {
 $("signoutLink").addEventListener("click", async (e) => {
   e.preventDefault();
   await db.auth.signOut();
+});
+
+// ---------- Site analytics ----------
+const PAGE_LABELS = {
+  index: "Home",
+  watch: "Watch",
+  bourbon: "Bourbon",
+  events: "Wine/Bourbon Events",
+  "tell-your-story": "Tell Your Story",
+  admin: "Admin",
+};
+
+function renderBars(id, items, opts) {
+  opts = opts || {};
+  const el = $(id);
+  if (!items.length) {
+    el.innerHTML = `<div class="bar-empty">${opts.emptyText || "No data yet."}</div>`;
+    return;
+  }
+  const max = Math.max(1, ...items.map((i) => i.value));
+  el.innerHTML = items
+    .map(
+      (i) => `
+    <div class="bar-row">
+      <span class="bl-label" title="${escapeHtml(i.label)}">${escapeHtml(i.label)}</span>
+      <span class="bl-track"><span class="bl-fill" style="width:${Math.round((i.value / max) * 100)}%"></span></span>
+      <span class="bl-val">${i.value}</span>
+    </div>`
+    )
+    .join("");
+}
+
+async function loadAnalytics() {
+  const { count: allTimeCount } = await db
+    .from("sbj_page_views")
+    .select("*", { count: "exact", head: true });
+  $("statAll").textContent = allTimeCount ?? 0;
+
+  const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const { data, error } = await db
+    .from("sbj_page_views")
+    .select("page, referrer, device, created_at")
+    .gte("created_at", since30.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(5000);
+
+  if (error || !data) {
+    ["barsByPage", "barsByDay", "barsByReferrer", "barsByDevice"].forEach((id) =>
+      renderBars(id, [], { emptyText: "Couldn't load analytics." })
+    );
+    return;
+  }
+
+  const now = Date.now();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const since7 = now - 7 * 24 * 60 * 60 * 1000;
+
+  let todayCount = 0;
+  let last7Count = 0;
+  data.forEach((row) => {
+    const t = new Date(row.created_at).getTime();
+    if (t >= startOfToday.getTime()) todayCount++;
+    if (t >= since7) last7Count++;
+  });
+  $("statToday").textContent = todayCount;
+  $("stat7").textContent = last7Count;
+  $("stat30").textContent = data.length;
+
+  // Views by page.
+  const pageCounts = {};
+  data.forEach((row) => { pageCounts[row.page] = (pageCounts[row.page] || 0) + 1; });
+  const byPage = Object.entries(pageCounts)
+    .map(([page, value]) => ({ label: PAGE_LABELS[page] || page, value }))
+    .sort((a, b) => b.value - a.value);
+  renderBars("barsByPage", byPage, { emptyText: "No pageviews logged yet." });
+
+  // Daily trend, last 14 days, oldest first.
+  const dayCounts = {};
+  data.forEach((row) => {
+    const d = new Date(row.created_at);
+    const key = d.toISOString().slice(0, 10);
+    dayCounts[key] = (dayCounts[key] || 0) + 1;
+  });
+  const byDay = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    byDay.push({ label: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }), value: dayCounts[key] || 0 });
+  }
+  renderBars("barsByDay", byDay, { emptyText: "No pageviews logged yet." });
+
+  // Top referrers.
+  const refCounts = {};
+  data.forEach((row) => {
+    const key = row.referrer || "Direct / None";
+    refCounts[key] = (refCounts[key] || 0) + 1;
+  });
+  const byReferrer = Object.entries(refCounts)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+  renderBars("barsByReferrer", byReferrer, { emptyText: "No referrer data yet." });
+
+  // Device breakdown — fixed category order (not sorted by count), so the
+  // same bucket never jumps position between loads.
+  const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
+  data.forEach((row) => {
+    if (row.device && deviceCounts.hasOwnProperty(row.device)) deviceCounts[row.device]++;
+  });
+  const byDevice = [
+    { label: "Desktop", value: deviceCounts.desktop },
+    { label: "Mobile", value: deviceCounts.mobile },
+    { label: "Tablet", value: deviceCounts.tablet },
+  ];
+  renderBars("barsByDevice", byDevice, { emptyText: "No device data yet." });
+}
+
+$("clearAnalyticsBtn").addEventListener("click", async () => {
+  if (!confirm("Clear all logged pageviews? This can't be undone.")) return;
+  await db.from("sbj_page_views").delete().not("id", "is", null);
+  loadAnalytics();
 });
 
 // ---------- Story submissions ----------

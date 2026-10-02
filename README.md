@@ -41,6 +41,10 @@ backend, deployed on Render as a static site.
 - `assets/bourbon.js` — price-checker logic.
 - `assets/bourbon-badge.css` — page-scoped badge theme for `bourbon.html`
   only (everything nested under `body.page-bourbon`).
+- `assets/analytics.js` — lightweight, self-hosted pageview tracker. Loaded
+  on every public page (not `admin.html`); logs one row per page load to
+  `sbj_page_views`. Viewable on the **Site Analytics** card at the top of
+  `/admin.html`.
 
 ## Supabase project
 
@@ -73,6 +77,10 @@ Supabase dashboard for the exact SQL):
 - `public.sbj_story_submissions` — "Tell Your Story" entries. Public
   insert only; admin-only read/update (so submissions aren't publicly
   browsable).
+- `public.sbj_page_views` — one row per page load (page, path, referring
+  hostname, coarse device type, timestamp). Public insert (shape-checked,
+  no free text); admin-only read/delete — the raw log isn't publicly
+  browsable, only the aggregated counts shown on `/admin.html`.
 
 ## First-time admin setup
 
