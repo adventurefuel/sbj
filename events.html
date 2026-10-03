@@ -83,27 +83,54 @@
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const feed = document.getElementById("eventsFeed");
-  const { data, error } = await db
-    .from("sbj_events")
-    .select("*")
-    .order("event_date", { ascending: true });
+  const { data, error } = await db.from("sbj_events").select("*");
   if (error || !data || !data.length) return; // keep the empty state markup
-  const monthFmt = (d) => new Date(d).toLocaleDateString(undefined, { month: "short" });
-  const dayFmt = (d) => new Date(d).getDate();
-  feed.innerHTML = data.map((ev) => `
+
+  // Local calendar day, as "YYYY-MM-DD" — matches how the date columns are
+  // stored, so comparing strings is safe (no UTC/local timezone drift).
+  const pad = (n) => String(n).padStart(2, "0");
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
+  // An event can have one date or several (e.g. a weekly series) — `dates`
+  // is a jsonb array of {date, time}. Older rows that predate this feature
+  // only have the single event_date/event_time columns.
+  function upcomingOccurrences(ev) {
+    const all = (ev.dates && ev.dates.length) ? ev.dates : (ev.event_date ? [{ date: ev.event_date, time: ev.event_time }] : []);
+    return all.filter((o) => o.date >= todayKey).sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  // Parsed as local midnight (not UTC) so the month/day shown always
+  // matches the date string, regardless of the visitor's timezone.
+  const monthFmt = (iso) => new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short" });
+  const dayFmt = (iso) => new Date(iso + "T00:00:00").getDate();
+  const shortFmt = (o) => `${monthFmt(o.date)} ${dayFmt(o.date)}${o.time ? " · " + o.time : ""}`;
+
+  const upcoming = data
+    .map((ev) => ({ ev, occ: upcomingOccurrences(ev) }))
+    .filter((x) => x.occ.length) // drop events with no upcoming dates at all
+    .sort((a, b) => a.occ[0].date.localeCompare(b.occ[0].date));
+
+  if (!upcoming.length) return; // keep the empty-state markup
+
+  feed.innerHTML = upcoming.map(({ ev, occ }) => {
+    const next = occ[0];
+    const moreDates = occ.slice(1);
+    return `
     <div class="event-card">
       <div class="date-block">
-        <div class="month">${ev.event_date ? monthFmt(ev.event_date) : "TBD"}</div>
-        <div class="day">${ev.event_date ? dayFmt(ev.event_date) : "?"}</div>
+        <div class="month">${monthFmt(next.date)}</div>
+        <div class="day">${dayFmt(next.date)}</div>
       </div>
       <div>
         <div class="title">${escapeHtml(ev.title)}</div>
-        <div class="venue">${escapeHtml([ev.venue, ev.city].filter(Boolean).join(" · "))}${ev.event_time ? " · " + escapeHtml(ev.event_time) : ""}</div>
+        <div class="venue">${escapeHtml([ev.venue, ev.city].filter(Boolean).join(" · "))}${next.time ? " · " + escapeHtml(next.time) : ""}</div>
+        ${moreDates.length ? `<div class="details">Also: ${moreDates.map((o) => escapeHtml(shortFmt(o))).join(", ")}</div>` : ""}
         ${ev.details ? `<div class="details">${escapeHtml(ev.details)}</div>` : ""}
         ${ev.link ? `<div class="details"><a href="${ev.link}" target="_blank" rel="noopener" style="color:var(--gold);">More info &#8250;</a></div>` : ""}
       </div>
-    </div>
-  `).join("");
+    </div>`;
+  }).join("");
 });
 </script>
 </body>

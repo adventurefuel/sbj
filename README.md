@@ -73,7 +73,11 @@ Supabase dashboard for the exact SQL):
 - `public.sbj_price_checks` — the public "Joe's Verdicts" log. Public read
   and insert (with basic sanity checks); admin-only delete.
 - `public.sbj_events` — "What's Pouring Locally" events. Public read;
-  admin-only write. Starts empty.
+  admin-only write. An event can have one date or several — `dates` is a
+  jsonb array of `{date, time}`, used for a repeating listing (e.g. a
+  standing weekly pour) instead of one row per occurrence. The legacy
+  single `event_date`/`event_time` columns stay for older rows; the app
+  falls back to them when `dates` is empty.
 - `public.sbj_story_submissions` — "Tell Your Story" entries. Public
   insert only; admin-only read/update (so submissions aren't publicly
   browsable).

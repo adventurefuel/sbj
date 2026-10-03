@@ -28,6 +28,14 @@
   .icon-btn:hover { color: var(--rust); }
   .add-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
   .add-row input, .add-row select { background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 9px 10px; border-radius: 6px; font-size: 13px; flex: 1; min-width: 120px; }
+  .date-time-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+  .date-time-row input[type="date"], .date-time-row input[type="text"] { background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 9px 10px; border-radius: 6px; font-size: 13px; }
+  .date-time-row input[type="date"] { flex: 0 0 150px; }
+  .date-time-row input[type="text"] { flex: 1; min-width: 140px; }
+  .date-time-row .icon-btn { flex-shrink: 0; }
+  .dates-cell .dates-list { margin-bottom: 6px; }
+  .dates-cell .add-date-row { display:flex; gap:6px; align-items:center; }
+  .dates-cell .add-date-row input[type="date"] { background: var(--ink-2); border: 1px solid var(--line); color: var(--cream); padding: 4px 6px; border-radius: 5px; font-size: 11px; }
 
   .stat-tiles { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
   .stat-tile { flex:1; min-width:110px; background: var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
@@ -149,15 +157,25 @@
 
     <div class="card-block">
       <h2>What's Pouring Locally &mdash; Events</h2>
-      <div class="desc">Add, edit, or remove events shown on the Wine/Bourbon Events page.</div>
+      <div class="desc">Add, edit, or remove events shown on the Wine/Bourbon Events page. An event can have more than one date &mdash; useful for a weekly series like a standing Sunday pour.</div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Title</th><th>Venue</th><th>City</th><th>Link</th><th></th></tr></thead>
+          <thead><tr><th>Dates</th><th>Title</th><th>Venue</th><th>City</th><th>Link</th><th></th></tr></thead>
           <tbody id="eventsBody"><tr><td colspan="6">Loading&hellip;</td></tr></tbody>
         </table>
       </div>
+
+      <div class="desc" style="margin-top:18px; margin-bottom:6px;">Add a new event &mdash; add one date, or add several if it repeats.</div>
+      <div id="newEventDatesList">
+        <div class="date-time-row">
+          <input type="date" class="new-date-input">
+          <input type="text" class="new-time-input" placeholder="Time (optional, e.g. 6:00 PM)">
+          <button type="button" class="icon-btn remove-date-row">Remove</button>
+        </div>
+      </div>
+      <button class="icon-btn" id="addDateRowBtn" type="button" style="margin-bottom:14px;">+ Add Another Date</button>
+
       <div class="add-row">
-        <input type="date" id="newEventDate">
         <input type="text" id="newEventTitle" placeholder="Event title">
         <input type="text" id="newEventVenue" placeholder="Venue">
         <input type="text" id="newEventCity" placeholder="City">
@@ -408,39 +426,130 @@ async function loadStories() {
 }
 
 // ---------- Events ----------
+// An event can have one date or several (e.g. a weekly series) — `dates` is
+// a jsonb array of {date, time}. Older rows that predate this feature only
+// have the single event_date/event_time columns; occurrencesFor() falls
+// back to those so every row renders the same way either way.
+let eventsCache = [];
+
+function occurrencesFor(ev) {
+  if (ev.dates && ev.dates.length) return ev.dates;
+  if (ev.event_date) return [{ date: ev.event_date, time: ev.event_time || null }];
+  return [];
+}
+
+function fmtDate(iso) {
+  return new Date(iso + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function fmtOccurrence(o) {
+  return fmtDate(o.date) + (o.time ? ` (${o.time})` : "");
+}
+
 async function loadEvents() {
   const body = $("eventsBody");
-  const { data, error } = await db.from("sbj_events").select("*").order("event_date", { ascending: true });
+  const { data, error } = await db.from("sbj_events").select("*");
   if (error) { body.innerHTML = `<tr><td colspan="6">Couldn't load events.</td></tr>`; return; }
   if (!data.length) { body.innerHTML = `<tr><td colspan="6">No events yet — add one below.</td></tr>`; return; }
-  body.innerHTML = data.map((ev) => `
+  eventsCache = data;
+  data.sort((a, b) => {
+    const da = occurrencesFor(a)[0]?.date || "";
+    const db_ = occurrencesFor(b)[0]?.date || "";
+    return da.localeCompare(db_);
+  });
+  body.innerHTML = data.map((ev) => {
+    const occ = occurrencesFor(ev).slice().sort((a, b) => a.date.localeCompare(b.date));
+    return `
     <tr>
-      <td>${ev.event_date || "TBD"}</td>
+      <td class="dates-cell">
+        <div class="dates-list">${occ.length ? occ.map(fmtOccurrence).join(", ") : "TBD"}</div>
+        <div class="add-date-row">
+          <input type="date" class="add-date-input" data-id="${ev.id}">
+          <button class="icon-btn add-date-btn" data-id="${ev.id}">+ Date</button>
+        </div>
+      </td>
       <td>${escapeHtml(ev.title)}</td>
       <td>${escapeHtml(ev.venue || "—")}</td>
       <td>${escapeHtml(ev.city || "—")}</td>
       <td>${ev.link ? `<a href="${ev.link}" target="_blank" rel="noopener" style="color:var(--gold);">link</a>` : "—"}</td>
       <td><button class="icon-btn del-event" data-id="${ev.id}">Remove</button></td>
-    </tr>`).join("");
+    </tr>`;
+  }).join("");
   body.querySelectorAll(".del-event").forEach((btn) => {
     btn.addEventListener("click", async () => {
       await db.from("sbj_events").delete().eq("id", btn.dataset.id);
       loadEvents();
     });
   });
+  body.querySelectorAll(".add-date-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      const input = body.querySelector(`.add-date-input[data-id="${id}"]`);
+      const newDate = input.value;
+      if (!newDate) return;
+      const ev = eventsCache.find((e) => e.id === id);
+      if (!ev) return;
+      const existing = occurrencesFor(ev);
+      if (existing.some((o) => o.date === newDate)) { input.value = ""; return; }
+      const updated = existing.concat([{ date: newDate, time: null }]).sort((a, b) => a.date.localeCompare(b.date));
+      await db.from("sbj_events").update({ dates: updated, event_date: updated[0].date, event_time: updated[0].time }).eq("id", id);
+      loadEvents();
+    });
+  });
 }
+
+function addDateRow() {
+  const row = document.createElement("div");
+  row.className = "date-time-row";
+  row.innerHTML = `
+    <input type="date" class="new-date-input">
+    <input type="text" class="new-time-input" placeholder="Time (optional, e.g. 6:00 PM)">
+    <button type="button" class="icon-btn remove-date-row">Remove</button>`;
+  $("newEventDatesList").appendChild(row);
+}
+
+$("addDateRowBtn").addEventListener("click", addDateRow);
+
+$("newEventDatesList").addEventListener("click", (e) => {
+  if (!e.target.classList.contains("remove-date-row")) return;
+  const rows = $("newEventDatesList").querySelectorAll(".date-time-row");
+  if (rows.length > 1) {
+    e.target.closest(".date-time-row").remove();
+  } else {
+    // Keep at least one row — just clear it instead of removing it.
+    rows[0].querySelector(".new-date-input").value = "";
+    rows[0].querySelector(".new-time-input").value = "";
+  }
+});
 
 $("addEventBtn").addEventListener("click", async () => {
   const title = $("newEventTitle").value.trim();
   if (!title) return;
+  const dates = Array.from($("newEventDatesList").querySelectorAll(".date-time-row"))
+    .map((row) => {
+      const date = row.querySelector(".new-date-input").value;
+      const time = row.querySelector(".new-time-input").value.trim();
+      return date ? { date, time: time || null } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  if (!dates.length) return;
   await db.from("sbj_events").insert({
     title,
-    event_date: $("newEventDate").value || null,
     venue: $("newEventVenue").value.trim() || null,
     city: $("newEventCity").value.trim() || null,
     link: $("newEventLink").value.trim() || null,
+    event_date: dates[0].date,
+    event_time: dates[0].time,
+    dates,
   });
-  ["newEventDate","newEventTitle","newEventVenue","newEventCity","newEventLink"].forEach(id => $(id).value = "");
+  ["newEventTitle", "newEventVenue", "newEventCity", "newEventLink"].forEach((id) => $(id).value = "");
+  $("newEventDatesList").innerHTML = `
+    <div class="date-time-row">
+      <input type="date" class="new-date-input">
+      <input type="text" class="new-time-input" placeholder="Time (optional, e.g. 6:00 PM)">
+      <button type="button" class="icon-btn remove-date-row">Remove</button>
+    </div>`;
   loadEvents();
 });
 
