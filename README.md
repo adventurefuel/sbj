@@ -64,7 +64,7 @@ Schema (see migrations `init_sbj_schema` and `seed_sbj_price_sheet` in the
 Supabase dashboard for the exact SQL):
 
 - `public.sbj_admins` — allowlist of `auth.users.id` who may manage SBJ
-  content. Starts **empty** — see "First-time admin setup" below.
+  content. See "Admin users" below.
 - `public.sbj_price_sheet` — bottle_name, msrp, secondary_low/high, notes.
   Public read; admin-only write. Seeded with the bottles from Joe's logo,
   since expanded with real Michigan Liquor Control Commission minimum
@@ -86,24 +86,35 @@ Supabase dashboard for the exact SQL):
   no free text); admin-only read/delete — the raw log isn't publicly
   browsable, only the aggregated counts shown on `/admin.html`.
 
-## First-time admin setup
+## Admin users
 
-There's no public signup form anywhere except `admin.html`'s "Create an
-account" flow, and a brand-new account has **no access** until it's added
-to the `sbj_admins` allowlist:
+Admin sign-in is Supabase Auth: each person's **email is their username**
+and they choose their own password (stored hashed by Supabase — there is
+no list of passwords anywhere, and none can be stored in a static site).
+A brand-new account has **no access** until an existing admin approves it:
 
-1. Open `/admin.html`, click **Create an account**, sign up with your
-   email + a password. Supabase may send a confirmation email — click it,
-   then sign in.
-2. You'll land on an "Account pending approval" screen. That's expected.
-3. In the Supabase dashboard for the `ADventure Fuel's Project` project,
-   run this SQL once per person (Table Editor → SQL, or ask Claude to run
-   it):
-   ```sql
-   insert into public.sbj_admins (id, email)
-   select id, email from auth.users where email = 'the-persons-email@example.com';
-   ```
-4. Refresh `/admin.html` — the management tools unlock.
+1. The new person opens `/admin.html`, clicks **Create an account**, and
+   signs up with their email + a password (Supabase may send a
+   confirmation email — click it, then sign in).
+2. They land on "Account Pending Approval". That automatically files an
+   access request (`sbj_access_requests`).
+3. An existing admin opens `/admin.html` → **Admin Users** → **Access
+   Requests** and clicks **Approve** (or **Dismiss**). Admins can also
+   **Remove** other admins from **Current Admins** (never themselves).
+4. The new admin refreshes `/admin.html` — the management tools unlock.
+
+**Bootstrapping the very first admin** (only needed on a fresh project —
+`tarmale.daniel@gmail.com` is already one): sign up as above, then run
+this once in the Supabase SQL editor:
+
+```sql
+insert into public.sbj_admins (id, email)
+select id, email from auth.users where email = 'the-persons-email@example.com';
+```
+
+`public.sbj_access_requests` — one row per person waiting for approval
+(own-row insert only; admin-only read/delete). Policies on `sbj_admins`
+use the `sbj_is_admin()` helper function so they don't recurse.
 
 ## Local development
 
