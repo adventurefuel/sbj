@@ -44,12 +44,14 @@
   .analytics-grid { display:grid; grid-template-columns: 1fr 1fr; gap:26px; }
   @media (max-width: 760px) { .analytics-grid { grid-template-columns: 1fr; } }
   .analytics-grid h3 { font-family: var(--font-mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color: var(--cream-dim); margin-bottom:10px; font-weight:600; }
-  .bar-list { display:flex; flex-direction:column; gap:7px; }
+  .bar-list { display:flex; flex-direction:column; gap:8px; }
   .bar-row { display:flex; align-items:center; gap:10px; }
   .bar-row .bl-label { width:108px; flex-shrink:0; color: var(--cream-dim); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .bar-row .bl-track { flex:1; background: var(--ink-2); border-radius:4px; height:14px; overflow:hidden; }
-  .bar-row .bl-fill { height:100%; background: var(--gold); border-radius:4px; min-width:3px; }
-  .bar-row .bl-val { width:36px; text-align:right; color: var(--cream); font-family: var(--font-mono); font-size:11.5px; flex-shrink:0; }
+  /* The track and fill are <span>s — they must be display:block or the
+     browser ignores their width/height and the yellow bar never draws. */
+  .bar-row .bl-track { display:block; flex:1; background: var(--line-soft); border-radius:6px; height:18px; overflow:hidden; }
+  .bar-row .bl-fill { display:block; height:100%; background: var(--gold); border-radius:6px; min-width:4px; }
+  .bar-row .bl-val { width:40px; text-align:right; color: var(--cream); font-family: var(--font-mono); font-size:12.5px; font-weight:700; flex-shrink:0; }
   .bar-empty { color: var(--cream-dim); font-size:12.5px; }
 </style>
 </head>
@@ -298,7 +300,7 @@ function renderBars(id, items, opts) {
       (i) => `
     <div class="bar-row">
       <span class="bl-label" title="${escapeHtml(i.label)}">${escapeHtml(i.label)}</span>
-      <span class="bl-track"><span class="bl-fill" style="width:${Math.round((i.value / max) * 100)}%"></span></span>
+      <span class="bl-track"><span class="bl-fill" style="width:${Math.round((i.value / max) * 100)}%;${i.value > 0 ? "" : "min-width:0;"}"></span></span>
       <span class="bl-val">${i.value}</span>
     </div>`
     )
