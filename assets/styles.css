@@ -196,9 +196,11 @@ nav.main-nav a.active {
     radial-gradient(ellipse at 85% 15%, rgba(240, 178, 62, 0.10), transparent 50%);
 }
 
-/* Photo-wall background (home page hero): a tilted grid of real photos at
-   low opacity, darkened toward the middle so the buttons stay readable and
-   faded into the page at the bottom. Purely decorative (aria-hidden). */
+/* Photo-wall background (home page hero): a tilted grid of lots of small
+   photos at low opacity, darkened toward the middle so the buttons stay
+   readable and faded into the page at the bottom. Purely decorative
+   (aria-hidden). The same ~30 photos repeat, so the browser only downloads
+   each file once. */
 .hero .container { position: relative; z-index: 1; }
 
 .hero-collage {
@@ -212,10 +214,10 @@ nav.main-nav a.active {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 175%;
+  width: 180%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
   transform: translate(-50%, -50%) rotate(-9deg);
   opacity: 0.52;
 }
@@ -224,10 +226,10 @@ nav.main-nav a.active {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
   filter: saturate(0.85) brightness(0.9);
 }
-.hc-grid img:nth-child(3n + 2) { transform: translateY(28px); }
+.hc-grid img:nth-child(even) { transform: translateY(22px); }
 .hero-collage::after {
   content: "";
   position: absolute;
@@ -238,14 +240,10 @@ nav.main-nav a.active {
 }
 @media (min-width: 760px) {
   .hc-grid {
-    width: 145%;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 14px;
+    width: 140%;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 10px;
   }
-  .hc-grid img:nth-child(3n + 2) { transform: none; }
-  .hc-grid img:nth-child(6n + 2),
-  .hc-grid img:nth-child(6n + 4),
-  .hc-grid img:nth-child(6n + 6) { transform: translateY(34px); }
 }
 
 .hero-avatar {
