@@ -196,6 +196,58 @@ nav.main-nav a.active {
     radial-gradient(ellipse at 85% 15%, rgba(240, 178, 62, 0.10), transparent 50%);
 }
 
+/* Photo-wall background (home page hero): a tilted grid of real photos at
+   low opacity, darkened toward the middle so the buttons stay readable and
+   faded into the page at the bottom. Purely decorative (aria-hidden). */
+.hero .container { position: relative; z-index: 1; }
+
+.hero-collage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hc-grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 175%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  transform: translate(-50%, -50%) rotate(-9deg);
+  opacity: 0.52;
+}
+.hc-grid img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  filter: saturate(0.85) brightness(0.9);
+}
+.hc-grid img:nth-child(3n + 2) { transform: translateY(28px); }
+.hero-collage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(10, 9, 8, 0.66) 0%, rgba(10, 9, 8, 0.34) 55%, rgba(10, 9, 8, 0.04) 100%),
+    linear-gradient(to bottom, rgba(10, 9, 8, 0.45) 0%, rgba(10, 9, 8, 0) 15%, rgba(10, 9, 8, 0) 70%, var(--ink) 100%);
+}
+@media (min-width: 760px) {
+  .hc-grid {
+    width: 145%;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+  .hc-grid img:nth-child(3n + 2) { transform: none; }
+  .hc-grid img:nth-child(6n + 2),
+  .hc-grid img:nth-child(6n + 4),
+  .hc-grid img:nth-child(6n + 6) { transform: translateY(34px); }
+}
+
 .hero-avatar {
   width: 140px;
   height: 140px;
