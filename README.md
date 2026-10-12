@@ -27,9 +27,15 @@ backend, deployed on Render as a static site.
   real events are added. (Was `detroit.html` — `_redirects` forwards the
   old path.)
 - `watch.html` — links out to `https://www.youtube.com/@SumbourbonJoe`.
-- `tell-your-story.html` — the "want to be on the show" submission form.
+- `tell-your-story.html` — the "want to be on the show" submission form
+  (name, email, optional phone, story). After sending, the guest sees a
+  thank-you panel explaining what happens next.
+- `guest-questionnaire.html` — private questionnaire page. Reached only
+  through a per-guest link (`?t=<token>`) that an admin sends from the
+  Guest Pipeline; answers are saved through the `sbj_submit_questionnaire`
+  function. After submitting, the guest sees the booking link.
 - `admin.html` — sign-in gated tool for managing the price sheet, events,
-  and viewing story submissions / the price-check log.
+  the guest pipeline, and viewing the price-check log.
 - `assets/styles.css` — shared design tokens (Ink/near-black background,
   Gold/Rust accents, Anton + Archivo + JetBrains Mono — same font family
   convention as the 4DRIP Design Guide).
@@ -80,12 +86,43 @@ Supabase dashboard for the exact SQL):
   single `event_date`/`event_time` columns stay for older rows; the app
   falls back to them when `dates` is empty.
 - `public.sbj_story_submissions` — "Tell Your Story" entries. Public
-  insert only; admin-only read/update (so submissions aren't publicly
-  browsable).
+  insert only (shape-checked: must arrive as status `new` with no pipeline
+  fields set); admin-only read/update (so submissions aren't publicly
+  browsable). Pipeline columns: `status` (new, reviewing, invited,
+  scheduled, recorded, passed), `notes`, `last_contacted_at`, `q_token`,
+  `q_sent_at`, `q_submitted_at`, `q_answers`, plus `notified_at` /
+  `confirmation_sent_at` used by the email function.
+- `public.sbj_settings` — key/value settings for the guest workflow:
+  `booking_url` (public, shown to guests), `team_emails` and `from_email`
+  (private). Edited in **Guest Workflow Settings** on `/admin.html`.
+- `sbj_get_questionnaire(token)` / `sbj_submit_questionnaire(...)` —
+  SECURITY DEFINER functions that let a guest with a valid token (and only
+  after the team has sent it) read their first name and submit answers once.
 - `public.sbj_page_views` — one row per page load (page, path, referring
   hostname, coarse device type, timestamp). Public insert (shape-checked,
   no free text); admin-only read/delete — the raw log isn't publicly
   browsable, only the aggregated counts shown on `/admin.html`.
+
+## Guest workflow
+
+1. A guest submits the form. A database trigger calls the `sbj-notify`
+   edge function, which emails the team (`team_emails`) and sends the guest
+   a confirmation (needs the email setup below; otherwise it quietly does
+   nothing and the submission still lands in the pipeline).
+2. In **Guest Pipeline** on `/admin.html`, open the guest, read the story,
+   and either **Send questionnaire** (opens an editable message with their
+   private link; send by email, WhatsApp, or copy) or **Invite to record**
+   (same, with the booking link). Statuses, notes, and last-contacted date
+   are tracked there.
+3. When the guest submits the questionnaire their answers appear on their
+   card with a "Questionnaire in" badge.
+
+Email setup (one time, done by the account owner):
+
+- Create a Resend account, verify a sending domain, and create an API key.
+- In Supabase, add the key as the edge function secret `RESEND_API_KEY`.
+- In **Guest Workflow Settings**, fill in the send-from address (on the
+  verified domain), the team alert emails, and the booking link.
 
 ## Admin users
 

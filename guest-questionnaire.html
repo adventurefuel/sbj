@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guest Questionnaire | Sum-Bourbon Joe</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="description" content="A few quick questions before your recording." />
+<link rel="icon" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css" />
+<style>.next-steps{margin:0;padding-left:22px;display:grid;gap:10px}.next-steps li::marker{color:var(--gold);font-weight:700}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span class="brand-full">Sum-Bourbon <span class="accent">Joe</span></span>
+      <span class="brand-short accent">Podcast</span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="events.html">Wine/Bourbon Events</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="eyebrow">Joe's Guest Questionnaire</div>
+      <h1 id="qTitle">A Few Quick <span class="accent">Questions</span></h1>
+      <p id="qIntro">Takes about five minutes. This helps Joe plan a better conversation.</p>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:none;">
+    <div class="container" style="max-width:680px;">
+
+      <div class="form-panel" id="stateLoading"><div style="padding:8px 4px;">Loading&hellip;</div></div>
+
+      <div class="form-panel" id="stateInvalid" hidden>
+        <div class="form-head"><span>Link Not Found</span></div>
+        <p style="margin:0;">This questionnaire link isn't valid, or it hasn't been activated yet. Check the link in your email, or reply to Joe's team and they'll sort it out.</p>
+      </div>
+
+      <div class="form-panel" id="stateDone" hidden>
+        <div class="form-head"><span>You're All Set</span></div>
+        <div id="doneBody"></div>
+      </div>
+
+      <div class="form-panel" id="stateForm" hidden>
+        <div class="form-head"><span>Tell Us More</span></div>
+        <form id="qForm">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="topics">What do you want to talk about on the show?</label>
+              <textarea id="topics" maxlength="2000" placeholder="Your story, big moments, lessons, the bourbon you love..." required></textarea>
+            </div>
+            <div class="field full">
+              <label for="availability">When are you generally free to record?</label>
+              <textarea id="availability" maxlength="1000" style="min-height:90px;" placeholder="e.g. weekday evenings, Saturdays before 3pm" required></textarea>
+            </div>
+            <div class="field full">
+              <label for="links">Links to your business, socials, or anything you want shared <span style="opacity:.6;text-transform:none;">(optional)</span></label>
+              <textarea id="links" maxlength="1000" style="min-height:90px;" placeholder="Website, Instagram, Facebook..."></textarea>
+            </div>
+            <div class="field full">
+              <label for="offlimits">Anything that's off limits? <span style="opacity:.6;text-transform:none;">(optional)</span></label>
+              <textarea id="offlimits" maxlength="1000" style="min-height:90px;" placeholder="Topics you'd rather not get into"></textarea>
+            </div>
+            <div class="field full">
+              <label for="other">Anything else Joe should know? <span style="opacity:.6;text-transform:none;">(optional)</span></label>
+              <textarea id="other" maxlength="2000" style="min-height:90px;"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-rust">Send My Answers</button>
+            <span class="msg" id="qMsg"></span>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <a class="footer-brand" href="index.html">
+      <img src="assets/logo.png" alt="Sum-Bourbon Joe" />
+      <span>Sum-Bourbon <span class="accent">Joe</span></span>
+    </a>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="watch.html">Watch</a>
+      <a href="bourbon.html">Bourbon</a>
+      <a href="events.html">Wine/Bourbon Events</a>
+      <a href="tell-your-story.html">Tell Your Story</a>
+    </nav>
+    <div class="footer-social" id="footerSocial"></div>
+    <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
+    <div class="powered-by">
+      <a href="https://www.adventurefuel.agency" target="_blank" rel="noopener">
+        <img src="assets/adventurefuel-logo.png" alt="Adventure Fuel" />
+        <span>Powered by <strong>Adventure Fuel</strong></span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const $ = (id) => document.getElementById(id);
+  const show = (id) => ["stateLoading","stateInvalid","stateDone","stateForm"].forEach(x => $(x).hidden = (x !== id));
+  const token = new URLSearchParams(location.search).get("t") || "";
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID.test(token)) return show("stateInvalid");
+
+  // booking link (public setting), shown after the guest finishes
+  async function bookingUrl() {
+    try {
+      const { data } = await db.from("sbj_settings").select("value").eq("key", "booking_url").maybeSingle();
+      const v = (data && data.value || "").trim();
+      return /^https?:\/\//i.test(v) ? v : "";
+    } catch (e) { return ""; }
+  }
+  async function renderDone(first, justSent) {
+    const url = await bookingUrl();
+    let html = '<p style="margin:0 0 14px;">' + (justSent ? "Thanks" + (first ? ", " + escapeHtml(first) : "") + "! Your answers are in." : "We already have your answers" + (first ? ", " + escapeHtml(first) : "") + ".") + "</p>";
+    if (url) {
+      html += '<p style="margin:0 0 16px;">Last step: pick a time to record.</p><a class="btn btn-gold" target="_blank" rel="noopener" href="' + escapeHtml(url) + '">Pick A Recording Time</a>';
+    } else {
+      html += '<p style="margin:0;">Joe\'s team will email you shortly with a link to pick a recording time.</p>';
+    }
+    $("doneBody").innerHTML = html;
+    show("stateDone");
+  }
+
+  const { data, error } = await db.rpc("sbj_get_questionnaire", { p_token: token });
+  const row = Array.isArray(data) ? data[0] : data;
+  if (error || !row) return show("stateInvalid");
+  const first = row.first_name || "";
+  if (first) $("qIntro").textContent = "Hi " + first + "! Takes about five minutes. This helps Joe plan a better conversation.";
+  if (row.submitted) return renderDone(first, false);
+  show("stateForm");
+
+  $("qForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = $("qMsg"); msg.textContent = ""; msg.className = "msg";
+    const btn = e.target.querySelector("button[type=submit]"); btn.disabled = true;
+    const { data: ok, error: err } = await db.rpc("sbj_submit_questionnaire", {
+      p_token: token,
+      p_topics: $("topics").value.trim(),
+      p_availability: $("availability").value.trim(),
+      p_links: $("links").value.trim(),
+      p_offlimits: $("offlimits").value.trim(),
+      p_other: $("other").value.trim(),
+    });
+    btn.disabled = false;
+    if (err || ok === false) {
+      msg.textContent = err ? "Couldn't send that. Try again in a moment." : "These answers were already submitted.";
+      msg.className = "msg err";
+      if (!err) renderDone(first, false);
+      return;
+    }
+    renderDone(first, true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+</script>
+</body>
+</html>
