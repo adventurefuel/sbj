@@ -511,28 +511,32 @@ nav.main-nav a.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 14px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.05em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--cream-dim);
-  opacity: 0.75;
+  opacity: 0.9;
   transition: opacity 0.15s ease;
 }
 .powered-by:hover { opacity: 1; }
 .powered-by img {
-  width: 16px;
-  height: 16px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 .powered-by a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   color: var(--cream-dim);
 }
+.powered-by strong { color: var(--cream); font-weight: 700; }
 .powered-by a:hover { color: var(--gold); }
+.powered-by a:hover strong { color: var(--gold); }
 
 /* ---------- Generic page hero (subpages) ---------- */
 
