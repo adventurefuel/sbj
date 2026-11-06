@@ -30,6 +30,11 @@ backend, deployed on Render as a static site.
 - `tell-your-story.html` — the "want to be on the show" submission form
   (name, email, optional phone, story). After sending, the guest sees a
   thank-you panel explaining what happens next.
+- `sponsors.html` — "Sponsor The Show" page: three ways to partner plus an
+  inquiry form (name, company, email, optional phone/website, interest,
+  message). Saved to `sbj_sponsor_inquiries`; has a hidden honeypot field
+  to drop bot submissions. Linked from the header and footer menu of every
+  page. Inquiries are tracked on the **Sponsor Inquiries** card in `/admin.html`.
 - `guest-questionnaire.html` — private questionnaire page. Reached only
   through a per-guest link (`?t=<token>`) that an admin sends from the
   Guest Pipeline; answers are saved through the `sbj_submit_questionnaire`
@@ -92,6 +97,10 @@ Supabase dashboard for the exact SQL):
   scheduled, recorded, passed), `notes`, `last_contacted_at`, `q_token`,
   `q_sent_at`, `q_submitted_at`, `q_answers`, plus `notified_at` /
   `confirmation_sent_at` used by the email function.
+- `public.sbj_sponsor_inquiries` — Sponsors page form entries. Public insert
+  only (shape-checked, must arrive as status `new`); admin-only read/update.
+  Statuses: new, contacted, in_talks, sponsor, passed. A trigger calls the
+  same `sbj-notify` edge function (with `kind: "sponsor"`) to email the team.
 - `public.sbj_settings` — key/value settings for the guest workflow:
   `booking_url` (public, shown to guests), `team_emails` and `from_email`
   (private). Edited in **Guest Workflow Settings** on `/admin.html`.

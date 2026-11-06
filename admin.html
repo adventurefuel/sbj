@@ -200,6 +200,13 @@
     </div>
 
     <div class="card-block">
+      <h2>Sponsor Inquiries</h2>
+      <div class="desc">Brands that filled out the form on the Sponsors page, newest first. Click one to read it, reply, and track where it stands.</div>
+      <div class="pipe-tabs" id="spTabs"></div>
+      <div id="spList" class="pipe-list"><div class="bar-empty">Loading&hellip;</div></div>
+    </div>
+
+    <div class="card-block">
       <h2>What's Pouring Locally &mdash; Events</h2>
       <div class="desc">Add, edit, or remove events shown on the Wine/Bourbon Events page. An event can have more than one date &mdash; useful for a weekly series like a standing Sunday pour.</div>
       <div class="tbl-wrap">
@@ -317,6 +324,7 @@ async function refreshGate() {
   loadAnalytics();
   loadSettings();
   loadStories();
+  loadSponsors();
   loadEvents();
   loadPriceSheet();
   loadChecks();
@@ -363,6 +371,7 @@ const PAGE_LABELS = {
   bourbon: "Bourbon",
   events: "Wine/Bourbon Events",
   "tell-your-story": "Tell Your Story",
+  sponsors: "Sponsors",
   admin: "Admin",
 };
 
@@ -710,6 +719,91 @@ $("saveSettingsBtn").addEventListener("click", async () => {
   rows.forEach((r) => (pipeSettings[r.key] = r.value));
   msg.textContent = "Saved."; msg.className = "msg ok";
   renderPipeline();
+});
+
+// ---------- Sponsor inquiries ----------
+const SP_STATUSES = ["new", "contacted", "in_talks", "sponsor", "passed"];
+const SP_LABEL = { new: "new", contacted: "contacted", in_talks: "in talks", sponsor: "sponsor", passed: "passed" };
+let sponsors = [];
+let spFilter = "all";
+let spOpenId = null;
+
+async function loadSponsors() {
+  const { data, error } = await db.from("sbj_sponsor_inquiries").select("*").order("created_at", { ascending: false });
+  if (error) { $("spList").innerHTML = `<div class="bar-empty">Couldn't load inquiries.</div>`; return; }
+  sponsors = data || [];
+  renderSponsors();
+}
+
+function renderSponsors() {
+  const counts = { all: sponsors.length };
+  SP_STATUSES.forEach((st) => (counts[st] = sponsors.filter((x) => x.status === st).length));
+  $("spTabs").innerHTML = ["all"].concat(SP_STATUSES).map((st) =>
+    `<button type="button" class="pipe-tab ${spFilter === st ? "on" : ""}" data-sptab="${st}">${st === "all" ? "all" : SP_LABEL[st]}<b>${counts[st]}</b></button>`
+  ).join("");
+  const shown = sponsors.filter((x) => spFilter === "all" || x.status === spFilter);
+  $("spList").innerHTML = shown.length ? shown.map(sponsorHtml).join("")
+    : `<div class="bar-empty">${sponsors.length ? "Nothing in this stage." : "No inquiries yet."}</div>`;
+}
+
+function sponsorHtml(x) {
+  const open = spOpenId === x.id;
+  let body = "";
+  if (open) {
+    const subject = encodeURIComponent("Sponsoring Sum-Bourbon Joe");
+    body = `<div class="guest-body">
+      <div class="g-label">Contact</div>
+      <div class="g-text">${escapeHtml(x.name)} &middot; <a href="mailto:${escapeHtml(x.email)}?subject=${subject}" style="color:var(--gold);">${escapeHtml(x.email)}</a>${x.phone ? " &middot; " + escapeHtml(x.phone) : ""}${x.website ? "<br>" + escapeHtml(x.website) : ""}</div>
+      <div class="g-label">Interested in</div>
+      <div class="g-text">${escapeHtml(x.interest)}</div>
+      <div class="g-label">Message</div>
+      <div class="g-text">${escapeHtml(x.message)}</div>
+      <div class="g-label">Notes (saved when you click away)</div>
+      <textarea class="g-notes" data-spnotes="${x.id}" maxlength="4000" placeholder="Internal notes, only admins see this">${escapeHtml(x.notes || "")}</textarea>
+      <div class="g-actions">
+        <select class="mini status-select" data-spstatus="${x.id}">${SP_STATUSES.map((v) => `<option value="${v}" ${x.status === v ? "selected" : ""}>${SP_LABEL[v]}</option>`).join("")}</select>
+        <a class="btn btn-gold" href="mailto:${escapeHtml(x.email)}?subject=${subject}">Reply by email</a>
+      </div>
+    </div>`;
+  }
+  return `<div class="guest ${open ? "open" : ""}">
+    <div class="guest-head" data-sptoggle="${x.id}">
+      <span class="g-name">${escapeHtml(x.company)}</span>
+      <span class="g-sub">${escapeHtml(x.name)} &middot; ${escapeHtml(x.interest)}</span>
+      <span class="badge st">${SP_LABEL[x.status] || x.status}</span>
+      <span class="g-date">${fmtWhen(x.created_at)}</span>
+    </div>${body}</div>`;
+}
+
+async function patchSponsor(id, fields) {
+  const { error } = await db.from("sbj_sponsor_inquiries").update(fields).eq("id", id);
+  if (error) { alert("Couldn't save that change. Try again."); return false; }
+  const x = sponsors.find((r) => r.id === id);
+  if (x) Object.assign(x, fields);
+  return true;
+}
+
+$("spTabs").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-sptab]");
+  if (!b) return;
+  spFilter = b.dataset.sptab;
+  renderSponsors();
+});
+$("spList").addEventListener("click", (e) => {
+  const head = e.target.closest("[data-sptoggle]");
+  if (!head || e.target.closest("select, a, textarea")) return;
+  spOpenId = spOpenId === head.dataset.sptoggle ? null : head.dataset.sptoggle;
+  renderSponsors();
+});
+$("spList").addEventListener("change", async (e) => {
+  const sel = e.target.closest("[data-spstatus]");
+  if (sel && (await patchSponsor(sel.dataset.spstatus, { status: sel.value }))) renderSponsors();
+});
+$("spList").addEventListener("focusout", async (e) => {
+  const ta = e.target.closest("[data-spnotes]");
+  if (!ta) return;
+  const x = sponsors.find((r) => r.id === ta.dataset.spnotes);
+  if (x && (x.notes || "") !== ta.value) await patchSponsor(x.id, { notes: ta.value });
 });
 
 // ---------- Events ----------
