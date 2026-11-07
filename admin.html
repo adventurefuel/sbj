@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/dashboard.css">
 <style>
   .panel { max-width: 460px; margin: 70px auto; }
   .hidden { display: none !important; }
@@ -142,6 +143,8 @@
       <h1 style="font-size:26px;">SBJ Admin</h1>
       <div class="who">Signed in as <b id="whoEmail" style="color:var(--cream);"></b></div>
     </div>
+
+    <div class="card-block dash" id="dashCard"></div>
 
     <div class="card-block">
       <h2>Site Analytics</h2>
@@ -291,6 +294,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/supabase-client.js"></script>
+<script src="assets/dashboard.js"></script>
 <script>
 function $(id) { return document.getElementById(id); }
 function show(id) { $(id).classList.remove("hidden"); }
@@ -321,6 +325,7 @@ async function refreshGate() {
   hide("pendingGate");
   $("whoEmail").textContent = currentSession.user.email;
   show("adminApp");
+  if (window.sbjDashboard) sbjDashboard.load();
   loadAnalytics();
   loadSettings();
   loadStories();
@@ -485,7 +490,8 @@ async function loadAnalytics() {
 }
 
 $("clearAnalyticsBtn").addEventListener("click", async () => {
-  if (!confirm("Clear all logged pageviews? This can't be undone.")) return;
+  if (!confirm("Clear all logged pageviews? The Audience Dashboard keeps its daily visit history. This can't be undone.")) return;
+  try { await db.rpc("sbj_rollup_visits"); } catch (_) {}
   await db.from("sbj_page_views").delete().not("id", "is", null);
   loadAnalytics();
 });

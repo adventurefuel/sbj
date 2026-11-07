@@ -87,6 +87,14 @@ backend, deployed on Render as a static site.
   moves to its own domain, find-and-replace that address in the HTML files.
   Link apps cache previews, so after changing the image or text, refresh a
   link with Facebook's Sharing Debugger or LinkedIn's Post Inspector.
+- `assets/dashboard.js` + `assets/dashboard.css` — the **Audience Dashboard**
+  card at the top of `/admin.html` (admin only). Follower counts for YouTube,
+  Facebook and Instagram are typed in once a day with **Log today's numbers**
+  (they can't be read automatically). It shows big progress-to-goal bars
+  (YouTube 2,000 subscribers; Facebook 1,000; Instagram 1,000, set in
+  `GOALS` at the top of `dashboard.js`), line charts of growth, bars of new
+  followers per day/week/month, and website visits, all filtered by the
+  Timeframe dropdown. Charts are plain SVG; no outside libraries.
 - `assets/analytics.js` — lightweight, self-hosted pageview tracker. Loaded
   on every public page (not `admin.html`); logs one row per page load to
   `sbj_page_views`. Viewable on the **Site Analytics** card at the top of
@@ -141,6 +149,11 @@ Supabase dashboard for the exact SQL):
 - `sbj_get_questionnaire(token)` / `sbj_submit_questionnaire(...)` —
   SECURITY DEFINER functions that let a guest with a valid token (and only
   after the team has sent it) read their first name and submit answers once.
+- `public.sbj_audience_snapshots` — one row per date + platform (youtube,
+  facebook, instagram) with that day's follower count. Admin-only read/write.
+- `public.sbj_daily_visits` — one row per day with total page views, filled
+  by `sbj_rollup_visits()` (admin-only, run each time the dashboard loads and
+  before "Clear Log"), so visit history survives clearing the raw log.
 - `public.sbj_page_views` — one row per page load (page, path, referring
   hostname, coarse device type, timestamp). Public insert (shape-checked,
   no free text); admin-only read/delete — the raw log isn't publicly
