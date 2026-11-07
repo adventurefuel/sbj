@@ -53,6 +53,14 @@ backend, deployed on Render as a static site.
   message). Saved to `sbj_sponsor_inquiries`; has a hidden honeypot field
   to drop bot submissions. Linked from the header and footer menu of every
   page. Inquiries are tracked on the **Sponsor Inquiries** card in `/admin.html`.
+- `sponsor-kit.html` — **Pull Up A Chair sponsor kit**, built from the SBJ
+  Sponsor Media Kit PDF: the four packages with prices (Episode Sponsor $100 /
+  episode, Macomb Minute $250 / month, Hometown Founding $400 / month, Event /
+  Spotlight $300 one-time), the Macomb Minute segment, and the clip formats.
+  Not in the main menu; reached from a button on `sponsors.html`, and its
+  buttons lead back to the inquiry form there. The downloadable PDF is
+  `assets/sponsor-media-kit.pdf` (replace that file to update it; update the
+  prices in the page too, they are written directly in the HTML).
 - `guest-questionnaire.html` — private questionnaire page. Reached only
   through a per-guest link (`?t=<token>`) that an admin sends from the
   Guest Pipeline; answers are saved through the `sbj_submit_questionnaire`
@@ -65,8 +73,9 @@ backend, deployed on Render as a static site.
 - `assets/supabase-client.js` — Supabase client + WhatsApp link + socials
   helpers. **Only holds the public anon key** — safe to expose in client
   code; every write is enforced server-side by Postgres Row Level Security.
-- `assets/site.js` — shared nav/footer behavior (mobile menu, WhatsApp
-  links, socials, year).
+- `assets/site.js` — shared nav/footer behavior (mobile menu with open/close
+  icon, Escape and tap-a-link to close; WhatsApp links, socials, year). The
+  big full-width phone menu is styled in `assets/styles.css` (`mobile-open`).
 - `assets/bourbon.js` — price-checker logic.
 - `assets/bourbon-badge.css` — page-scoped badge theme for `bourbon.html`
   only (everything nested under `body.page-bourbon`).

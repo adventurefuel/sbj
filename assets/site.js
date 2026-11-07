@@ -44,6 +44,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("navToggle");
   const nav = document.getElementById("mainNav");
   if (toggle && nav) {
-    toggle.addEventListener("click", () => nav.classList.toggle("mobile-open"));
+    const setOpen = (open) => {
+      nav.classList.toggle("mobile-open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.innerHTML = open ? "&#10005;" : "&#9776;";
+    };
+    toggle.setAttribute("aria-controls", "mainNav");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.addEventListener("click", () => setOpen(!nav.classList.contains("mobile-open")));
+    nav.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+    window.addEventListener("resize", () => { if (window.innerWidth > 860) setOpen(false); });
   }
 });
