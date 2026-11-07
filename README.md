@@ -13,7 +13,19 @@ backend, deployed on Render as a static site.
 - `index.html` — landing page. Hero, the four "what brought you here" cards
   (Tell Your Story / Watch / Bourbon Price Checker / What's Pouring
   Locally), the "want to be on the show" steps, and the WhatsApp CTA box.
-- `bourbon.html` — **Sum-Bourbon Joe Price Check**. Type a bottle name, Joe
+- `holiday-recipes.html` — **The Holiday Pour** (menu label "Recipes"). Ten
+  festive bourbon cocktails with photos, ingredients, steps and serve notes,
+  built from the SBJ Holiday Pour PDF. Warm Christmas look (string lights,
+  falling snow, Playfair Display) is scoped to `body.page-holiday` in the
+  page's own `<style>`; snow respects reduced-motion settings. Photos are in
+  `assets/holiday/` (960x640 JPEGs, AI-generated, disclosed on the page);
+  share image is `assets/holiday-share.jpg`. To edit a drink, change its
+  `<article class="drink" id="drink-N">` block.
+- `bourbon.html` — **Sum-Bourbon Joe Price Check**. *Hidden:* no longer in the
+  menu, footer or home page, and marked `noindex` so search engines skip it.
+  It still works at its direct address and the admin Price Check Log is
+  unchanged. To bring it back, restore the `Bourbon` nav/footer links and the
+  home-page card. Type a bottle name, Joe
   looks it up against his seeded price sheet and shows the known
   MSRP/secondary range, you log what you paid, and it computes a verdict in
   Joe's voice ("Joe says: Score" / "Fair Play" / "Overpaid" / "Ouch" /
