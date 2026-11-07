@@ -6,25 +6,24 @@
 (function () {
   "use strict";
 
-  const GOALS = { youtube: 2000, facebook: 1000, instagram: 1000 };
+  const GOALS = { youtube: 2000 };
   const PLAT = {
     youtube:   { label: "YouTube",   unit: "subscribers", color: "#ff5252", icon: "&#9654;", cls: "yt" },
-    facebook:  { label: "Facebook",  unit: "followers",   color: "#4d8dff", icon: "f",       cls: "fb" },
-    instagram: { label: "Instagram", unit: "followers",   color: "#ee4f93", icon: "&#9678;", cls: "ig" },
   };
-  const ORDER = ["youtube", "facebook", "instagram"];
+  const ORDER = ["youtube"];
   const RANGES = [
     ["7", "Last 7 days"], ["30", "Last 30 days"], ["90", "Last 90 days"],
     ["180", "Last 6 months"], ["365", "Last year"], ["all", "All time"],
   ];
 
   let root = null;
-  let snaps = { youtube: [], facebook: [], instagram: [] }; // [{d:'YYYY-MM-DD', v}] sorted
+  let snaps = { youtube: [] }; // [{d:'YYYY-MM-DD', v}] sorted
   let visits = [];                                            // [{d, v}] sorted
   let range = "30";
   let chartSeq = 0;
   let redrawFns = [];
   let firstRender = true;
+  let ytAuto = false; // true once the automatic YouTube sync has worked in this session
 
   // ---------- small helpers ----------
   const esc = (s) => (window.escapeHtml ? window.escapeHtml(String(s)) : String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])));
@@ -205,7 +204,7 @@
   }
   function stageText(pct) {
     const label = pct >= 100 ? "Goal hit!" : pct >= 75 ? "Last stretch." : pct >= 50 ? "Past halfway." : pct >= 25 ? "Warming up." : "First pour.";
-    const sub = pct >= 100 ? "Time to set the next one." : pct >= 75 ? "The finish line is in sight." : pct >= 50 ? "Keep pouring." : pct >= 25 ? "Building momentum." : "Every follower counts.";
+    const sub = pct >= 100 ? "Time to set the next one." : pct >= 75 ? "The finish line is in sight." : pct >= 50 ? "Keep pouring." : pct >= 25 ? "Building momentum." : "Every subscriber counts.";
     return "<b>" + label + "</b> " + Math.min(100, pct).toFixed(1) + "% of the goal. " + sub;
   }
 
@@ -260,7 +259,7 @@
   function render() {
     redrawFns = []; chartSeq = 0;
     const animate = firstRender;
-    const hero = $id("dashHero"), pair = $id("dashPair");
+    const hero = $id("dashHero");
     // YouTube hero
     const yt = stats("youtube"), P = PLAT.youtube, goalYt = GOALS.youtube;
     if (yt) {
@@ -276,23 +275,10 @@
       hero.className = "yt-hero";
       hero.innerHTML = '<div><span class="badge-line"><i style="background:' + P.color + '">' + P.icon + "</i>YouTube subscribers &middot; goal " + fmt(goalYt) + "</span>" +
         '<div class="yt-count"><span class="big dim">0</span><span class="of">/ ' + fmt(goalYt) + "</span></div>" +
-        '<div class="stage"><b>Ready for the first pour.</b> Tap &ldquo;Log today&rsquo;s numbers&rdquo; and enter your current subscriber count.</div>' + pourHtml("youtube", 0, goalYt) + "</div>" +
+        '<div class="stage"><b>Ready for the first pour.</b> Tap &ldquo;Sync YouTube now&rdquo;, or log your current subscriber count by hand.</div>' + pourHtml("youtube", 0, goalYt) + "</div>" +
         '<div><div class="chart-box" id="ytChart"></div></div>';
     }
     lineChart($id("ytChart"), { series: platformSeries("youtube"), height: 250, label: "YouTube subscribers over time", empty: "No YouTube numbers in this timeframe yet.", goal: goalYt });
-
-    // Facebook + Instagram
-    pair.innerHTML = ["facebook", "instagram"].map((p) => {
-      const st = stats(p), pl = PLAT[p], goal = GOALS[p];
-      const pct = st ? Math.min(100, (st.cur.v / goal) * 100) : 0;
-      return '<div class="plat-card ' + pl.cls + (st && st.cur.v >= goal ? " reached" : "") + '">' +
-        '<span class="badge-line"><i style="background:' + (p === "instagram" ? "linear-gradient(135deg,#f58529,#dd2a7b,#8134af)" : pl.color) + '">' + pl.icon + "</i>" + pl.label + " &middot; goal " + fmt(goal) + "</span>" +
-        '<div class="plat-count"><span class="big' + (st ? "" : " dim") + '" ' + (st ? 'data-to="' + st.cur.v + '"' : "") + ">0" + '</span><span class="of">/ ' + fmt(goal) + "</span></div>" +
-        '<div class="stage">' + (st ? stageText(pct) : "<b>Ready for the first pour.</b> Log your current " + pl.unit + " count.") + "</div>" +
-        pourHtml(p, st ? st.cur.v : 0, goal) + (st ? chipsHtml(p, st) : "") +
-        '<div class="chart-box" style="margin-top:14px" id="chart_' + p + '"></div></div>';
-    }).join("");
-    ["facebook", "instagram"].forEach((p) => lineChart($id("chart_" + p), { series: platformSeries(p), height: 190, label: PLAT[p].label + " followers over time", empty: "No " + PLAT[p].label + " numbers in this timeframe yet.", goal: GOALS[p] }));
 
     renderNet(); renderVisits(); renderHistory();
 
@@ -319,8 +305,8 @@
     });
     const totals = series.map((s) => s.values.reduce((a, b) => a + b, 0));
     $id("netLegend").innerHTML = ORDER.map((p, i) => '<span><i style="background:' + PLAT[p].color + '"></i>' + PLAT[p].label + " <b style=\"color:var(--cream)\">" + (totals[i] > 0 ? "+" : "") + fmt(totals[i]) + "</b></span>").join("");
-    $id("netTitle").textContent = "New followers per " + mode + (mode === "week" ? " (weeks start Monday)" : "");
-    barChart($id("netChart"), { labels: keys.map((k) => bucketLabel(k, mode)), titles: keys.map((k) => (mode === "day" ? short(k, true) : mode === "week" ? "Week of " + short(k) : MON[parse(k).getMonth()] + " " + parse(k).getFullYear())), series, height: 240, label: "New followers per " + mode, empty: "Log at least two days of numbers to see growth bars." });
+    $id("netTitle").textContent = "New subscribers per " + mode + (mode === "week" ? " (weeks start Monday)" : "");
+    barChart($id("netChart"), { labels: keys.map((k) => bucketLabel(k, mode)), titles: keys.map((k) => (mode === "day" ? short(k, true) : mode === "week" ? "Week of " + short(k) : MON[parse(k).getMonth()] + " " + parse(k).getFullYear())), series, height: 240, label: "New subscribers per " + mode, empty: "Two days of numbers are needed to see growth bars." });
   }
 
   function renderVisits() {
@@ -352,8 +338,8 @@
     const list = [...dates].sort().reverse().slice(0, 21);
     const get = (p, d) => { const s = snaps[p].find((x) => x.d === d); return s ? fmt(s.v) : "&mdash;"; };
     $id("dashHistory").innerHTML = list.length
-      ? '<div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>Date</th><th class="num">YouTube</th><th class="num">Facebook</th><th class="num">Instagram</th><th></th></tr></thead><tbody>' +
-        list.map((d) => "<tr><td style=\"white-space:nowrap\">" + short(d, true) + '</td><td class="num">' + get("youtube", d) + '</td><td class="num">' + get("facebook", d) + '</td><td class="num">' + get("instagram", d) + '</td><td style="text-align:right"><button class="icon-btn" data-del="' + d + '" type="button">Delete</button></td></tr>').join("") +
+      ? '<div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>Date</th><th class="num">YouTube subscribers</th><th></th></tr></thead><tbody>' +
+        list.map((d) => "<tr><td style=\"white-space:nowrap\">" + short(d, true) + '</td><td class="num">' + get("youtube", d) + '</td><td style="text-align:right"><button class="icon-btn" data-del="' + d + '" type="button">Delete</button></td></tr>').join("") +
         "</tbody></table></div>"
       : '<div class="chart-empty">Nothing logged yet. Your first entry starts the charts.</div>';
   }
@@ -361,23 +347,26 @@
   // ---------- page skeleton + events ----------
   function build() {
     root.innerHTML =
-      '<div class="dash-top"><div><h2>Audience Dashboard</h2><div class="desc" style="margin:4px 0 0">Followers across YouTube, Facebook and Instagram, plus website visits. Log the counts once a day and watch the growth.</div></div>' +
+      '<div class="dash-top"><div><h2>Audience Dashboard</h2><div class="desc" style="margin:4px 0 0">YouTube subscribers toward 2,000, plus website visits. The YouTube number updates on its own whenever you open this page.</div></div>' +
       '<div class="dash-controls"><label class="dash-range"><span>Timeframe</span><select id="dashRange">' + RANGES.map((r) => '<option value="' + r[0] + '"' + (r[0] === range ? " selected" : "") + ">" + r[1] + "</option>").join("") + "</select></label>" +
-      '<button class="btn btn-gold" id="dashLogToggle" type="button">+ Log today&rsquo;s numbers</button></div></div>' +
+      '<button class="btn btn-outline" id="dashSyncBtn" type="button">&#8635; Sync YouTube now</button>' +
+      '<button class="btn btn-gold" id="dashLogToggle" type="button">+ Log YouTube by hand</button></div></div>' +
+      '<div class="dash-sync" id="dashSync"></div>' +
       '<div class="dash-nudge hidden" id="dashNudge"></div>' +
       '<form class="dash-log hidden" id="dashLog" novalidate><div class="dash-log-grid">' +
       '<label>Date<input type="date" id="dlDate"></label>' +
       ORDER.map((p) => '<label class="dl-' + PLAT[p].cls + '"><span>' + PLAT[p].label + " " + PLAT[p].unit + '</span><input type="number" inputmode="numeric" min="0" step="1" id="dl_' + p + '" placeholder="Current count"></label>').join("") +
       '<div class="dl-btn"><button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;min-height:44px">Save</button></div></div>' +
-      '<div class="dash-log-msg" id="dashLogMsg">Fill in any or all. Saving a date again just updates it.</div></form>' +
-      '<div class="yt-hero" id="dashHero"></div><div class="dash-pair" id="dashPair"></div>' +
-      '<div class="chart-panel"><div class="panel-h"><h3 id="netTitle">New followers</h3><div class="legend" id="netLegend"></div></div><div class="chart-box" id="netChart"></div></div>' +
+      '<div class="dash-log-msg" id="dashLogMsg">Saving a date again just updates it.</div></form>' +
       '<div class="chart-panel"><div class="panel-h"><h3 id="visTitle">Website visits</h3><div class="legend" id="visLegend"></div></div><div class="vis-tiles" id="visTiles"></div><div class="chart-box" id="visChart"></div>' +
       '<div class="desc" style="margin:10px 0 0;font-size:11.5px">Visits are page views logged by this site, kept as a daily history even after you clear the log.</div></div>' +
+      '<div class="yt-hero" id="dashHero"></div>' +
+      '<div class="chart-panel"><div class="panel-h"><h3 id="netTitle">New subscribers</h3><div class="legend" id="netLegend"></div></div><div class="chart-box" id="netChart"></div></div>' +
       '<div class="chart-panel dash-history"><div class="panel-h"><h3>Recent entries</h3></div><div id="dashHistory"></div></div>';
 
     $id("dashRange").addEventListener("change", (e) => { range = e.target.value; try { localStorage.setItem("sbjDashRange", range); } catch (_) {} render(); });
     $id("dashLogToggle").addEventListener("click", () => toggleLog());
+    $id("dashSyncBtn").addEventListener("click", () => syncYouTube(true));
     $id("dashLog").addEventListener("submit", saveLog);
     root.addEventListener("click", async (e) => {
       const b = e.target.closest("[data-del]"); if (!b) return;
@@ -421,12 +410,41 @@
   }
 
   function nudge() {
-    const el = $id("dashNudge"); const lasts = ORDER.map((p) => (snaps[p].length ? snaps[p][snaps[p].length - 1].d : null)).filter(Boolean);
-    const last = lasts.length ? lasts.sort().pop() : null; const gap = last ? daysBetween(last, todayStr()) : null;
-    if (last === null) { el.classList.remove("hidden"); el.innerHTML = "<span>No audience numbers yet. Log today&rsquo;s counts to start the charts.</span><button type=\"button\" data-open>Log now</button>"; }
-    else if (gap >= 1) { el.classList.remove("hidden"); el.innerHTML = "<span>Last logged " + (gap === 1 ? "yesterday" : gap + " days ago") + " (" + short(last) + "). Add today&rsquo;s numbers to keep the line moving.</span><button type=\"button\" data-open>Log now</button>"; }
-    else el.classList.add("hidden");
+    const el = $id("dashNudge"); const today = todayStr();
+    const any = ORDER.some((p) => snaps[p].length);
+    const stale = ORDER.filter((p) => !(p === "youtube" && ytAuto)).filter((p) => { const a = snaps[p]; return !a.length || a[a.length - 1].d < today; });
+    const open = "<button type=\"button\" data-open>Log now</button>";
+    if (!any) { el.classList.remove("hidden"); el.innerHTML = "<span>No YouTube numbers yet. Tap Sync YouTube now, or log your count by hand, to start the charts.</span>" + open; }
+    else if (stale.length) {
+      const names = stale.map((p) => PLAT[p].label);
+      const list = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0];
+      el.classList.remove("hidden"); el.innerHTML = "<span>Today&rsquo;s YouTube number isn&rsquo;t saved yet. Tap <b>Sync YouTube now</b>, or log it by hand.</span>" + open;
+    } else el.classList.add("hidden");
     const b = el.querySelector("[data-open]"); if (b) b.addEventListener("click", () => { toggleLog(true); $id("dashLog").scrollIntoView({ behavior: "smooth", block: "center" }); });
+  }
+
+  // ---------- automatic YouTube sync (official YouTube Data API via the sbj-audience-sync function) ----------
+  function setSync(state, res) {
+    const el = $id("dashSync"); if (!el) return; let t = "";
+    if (state === "running") t = "Checking YouTube&hellip;";
+    else if (state === "ok") t = (res && res.skipped ? "YouTube is already saved for today" : "YouTube synced") + " &middot; <b>" + fmt(res.count) + "</b> subscribers. YouTube rounds public counts above 1,000, so this can differ slightly from the exact number in YouTube Studio.";
+    else if (state === "notconfigured") t = "Automatic YouTube numbers aren&rsquo;t switched on yet. Add the <b>YOUTUBE_API_KEY</b> secret in Supabase (steps are in the README). Until then, log YouTube by hand.";
+    else if (state === "error") t = "Couldn&rsquo;t reach YouTube just now. Try &ldquo;Sync YouTube now&rdquo; again, or log it by hand.";
+    el.innerHTML = t; el.classList.toggle("hidden", !t);
+  }
+  async function syncYouTube(force) {
+    if (!db.functions) return;
+    const btn = $id("dashSyncBtn"); if (btn) btn.disabled = true; setSync("running");
+    let res = null;
+    try { const { data, error } = await db.functions.invoke("sbj-audience-sync", { body: { force: !!force } }); res = error ? { ok: false, error: "request_failed" } : data; }
+    catch (_) { res = { ok: false, error: "request_failed" }; }
+    if (btn) btn.disabled = false;
+    if (res && res.ok) {
+      ytAuto = true; setSync("ok", res);
+      if (!res.skipped || force) { await fetchData(); render(); }
+      nudge();
+    } else if (res && res.error === "not_configured") { setSync("notconfigured"); }
+    else setSync("error", res);
   }
 
   async function fetchData() {
@@ -435,7 +453,7 @@
       db.from("sbj_audience_snapshots").select("snap_date, platform, followers").order("snap_date", { ascending: true }).limit(5000),
       db.from("sbj_daily_visits").select("day, visits").order("day", { ascending: true }).limit(5000),
     ]);
-    snaps = { youtube: [], facebook: [], instagram: [] };
+    snaps = { youtube: [] };
     ((a && a.data) || []).forEach((r) => { if (snaps[r.platform]) snaps[r.platform].push({ d: r.snap_date, v: r.followers }); });
     visits = ((v && v.data) || []).map((r) => ({ d: r.day, v: r.visits }));
     return !(a && a.error) && !(v && v.error);
@@ -448,6 +466,9 @@
     firstRender = true;
     const ok = await fetchData();
     render(); nudge();
+    const ytToday = snaps.youtube.some((r) => r.d === todayStr());
+    if (ok && !ytToday) syncYouTube(false);
+    else if (ytToday) { const last = snaps.youtube[snaps.youtube.length - 1]; setSync("ok", { skipped: true, count: last.v }); }
     if (!ok) { const n = $id("dashNudge"); n.classList.remove("hidden"); n.innerHTML = "<span>Couldn&rsquo;t load some dashboard data. Refresh to try again.</span>"; }
   }
 
