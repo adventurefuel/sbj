@@ -26,7 +26,13 @@ backend, deployed on Render as a static site.
   events from Supabase; launches empty with a friendly placeholder until
   real events are added. (Was `detroit.html` — `_redirects` forwards the
   old path.)
-- `watch.html` — links out to `https://www.youtube.com/@SumbourbonJoe`.
+- `watch.html` — Subscribe call-to-action (centered, emphasized) plus Joe's
+  videos. The "Now Playing" player is the channel's uploads playlist, so it
+  always starts with the newest upload on its own. The "Recent Episodes" grid
+  below it is a fixed list of video IDs, titles and durations written
+  directly in the page (`class="ep-card"` blocks): it does NOT update itself,
+  so refresh it when new episodes drop. Clicking a card plays it in the main
+  player. Channel: `https://www.youtube.com/@SumbourbonJoe`.
 - `tell-your-story.html` — the "want to be on the show" submission form
   (name, email, optional phone, story). After sending, the guest sees a
   thank-you panel explaining what happens next.

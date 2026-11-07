@@ -28,6 +28,36 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css" />
+<style>
+.watch-cta{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:26px}
+.btn-subscribe{background:var(--gold);color:#1a1204;font-weight:700;font-size:16px;letter-spacing:.1em;padding:20px 40px;border-radius:12px;justify-content:center;box-shadow:0 0 0 0 rgba(240,178,62,.55);animation:subPulse 2.6s ease-out infinite}
+.btn-subscribe:hover{background:var(--gold-2);transform:translateY(-1px)}
+.btn-subscribe .sub-icon{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--rust);color:var(--cream);font-size:11px;padding-left:2px}
+@keyframes subPulse{0%{box-shadow:0 0 0 0 rgba(240,178,62,.5)}70%{box-shadow:0 0 0 16px rgba(240,178,62,0)}100%{box-shadow:0 0 0 0 rgba(240,178,62,0)}}
+@media (prefers-reduced-motion:reduce){.btn-subscribe{animation:none}}
+.watch-secondary{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim)}
+.watch-secondary:hover{color:var(--gold)}
+.watch-hint{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);opacity:.8}
+.player-wrap{max-width:880px;margin:0 auto;aspect-ratio:16/9;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#000}
+.player-wrap iframe{width:100%;height:100%;border:0;display:block}
+.player-note{text-align:center;margin:14px auto 0;font-size:13px;color:var(--cream-dim);max-width:560px}
+.ep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:900px){.ep-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.ep-grid{grid-template-columns:1fr}.btn-subscribe{width:100%;padding:20px 22px;font-size:15px}.watch-cta{width:100%}}
+.ep-card{display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);padding:10px 10px 14px;transition:border-color .15s,transform .15s}
+.ep-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.ep-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#000}
+.ep-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ep-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(10,9,8,.72);border:2px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px;padding-left:3px}
+.ep-card:hover .ep-play{background:var(--gold);color:#1a1204}
+.ep-dur{position:absolute;right:8px;bottom:8px;background:rgba(10,9,8,.85);color:var(--cream);font-family:var(--font-mono);font-size:11px;padding:2px 6px;border-radius:4px}
+.ep-title{font-size:14px;line-height:1.4;font-weight:600;color:var(--cream);padding:0 4px}
+.subscribe-banner{max-width:760px;margin:0 auto;text-align:center;background:var(--panel);border:1px solid var(--gold);border-radius:var(--radius);padding:44px 28px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.subscribe-banner .sb-eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.subscribe-banner h2{font-size:clamp(26px,4.5vw,40px);margin:0}
+.subscribe-banner h2 .accent{color:var(--gold)}
+.subscribe-banner p{margin:0 0 8px;max-width:480px;color:var(--cream-dim)}
+</style>
 </head>
 <body>
 
@@ -58,27 +88,86 @@
     <div class="container">
       <div class="eyebrow">Sit Back &amp; Sip</div>
       <h1>Watch <span class="accent">Sum-Bourbon Joe</span></h1>
-      <p>New episodes drop regularly on YouTube — bourbon talk, Detroit stories, and whoever Joe's got sitting in the chair that week.</p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
-        <a class="btn btn-gold" href="https://www.youtube.com/@SumbourbonJoe?sub_confirmation=1" target="_blank" rel="noopener">Subscribe On YouTube</a>
-        <a class="btn btn-outline" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener">Open The Channel &#8250;</a>
+      <p>Bourbon talk, Detroit stories, and whoever Joe's got sitting in the chair that week. New episodes every Wednesday on YouTube.</p>
+      <div class="watch-cta">
+        <a class="btn btn-subscribe" href="https://www.youtube.com/@SumbourbonJoe?sub_confirmation=1" target="_blank" rel="noopener"><span class="sub-icon">&#9654;</span> Subscribe On YouTube</a>
+        <a class="watch-secondary" href="https://www.youtube.com/@SumbourbonJoe" target="_blank" rel="noopener">or open the channel &#8250;</a>
+        <div class="watch-hint">Free &middot; Never miss an episode</div>
       </div>
     </div>
   </section>
 
-  <section class="section" style="border-top:none;">
+  <section class="section" style="border-top:none; padding-bottom:20px;">
     <div class="container">
-      <div class="link-card" style="max-width:640px; margin:0 auto;">
-        <span class="icon">&#9654;</span>
-        <span class="body">
-          <div class="title">@SumbourbonJoe on YouTube</div>
-          <div class="desc">Subscribe so you never miss an episode.</div>
-        </span>
-        <a class="btn btn-rust" href="https://www.youtube.com/@SumbourbonJoe?sub_confirmation=1" target="_blank" rel="noopener">Subscribe &#8250;</a>
+      <div class="head">
+        <div class="eyebrow dim">Latest Episodes</div>
+        <h2>Now <span class="accent">Playing</span></h2>
       </div>
-      <p style="text-align:center; margin-top:22px; font-size:13px;">
-        Once specific episodes are picked, this page can embed them directly &mdash; for now, every link here points straight to the channel.
-      </p>
+      <div class="player-wrap">
+        <iframe id="mainPlayer" src="https://www.youtube-nocookie.com/embed/videoseries?list=UU0X1ZPXuBwicXtndB7G1SgQ&amp;rel=0" title="Latest Sum-Bourbon Joe episodes" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <p class="player-note">This player always starts with Joe's newest upload. Tap the playlist button inside it to browse everything.</p>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:none; padding-top:30px;">
+    <div class="container">
+      <div class="head">
+        <div class="eyebrow dim">Recent Uploads</div>
+        <h2>Catch Up On <span class="accent">Recent Episodes</span></h2>
+      </div>
+      <div class="ep-grid" id="epGrid">
+        <a class="ep-card" href="https://www.youtube.com/watch?v=8EPtWi6-qjE" data-vid="8EPtWi6-qjE" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/8EPtWi6-qjE/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">23:58</span></span>
+          <span class="ep-title">Sum-Bourbon Joe S4E5 - Lions, Cider, and Halloween</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=AgJ3k_Y7OKs" data-vid="AgJ3k_Y7OKs" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/AgJ3k_Y7OKs/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">0:15</span></span>
+          <span class="ep-title">Sum-Bourbon Joe Visits Silver Springs Winery 🍷 | Don Giovanni’s Retirement Sendoff</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=-elmXUCl988" data-vid="-elmXUCl988" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/-elmXUCl988/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">1:46</span></span>
+          <span class="ep-title">Sum-Bourbon Joe Visits Idol Ridge Winery &amp; Alder Creek Distillery 🍷🥃</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=Lk82qQBLEsc" data-vid="Lk82qQBLEsc" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/Lk82qQBLEsc/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">1:04</span></span>
+          <span class="ep-title">Sum-Bourbon Joe Visits Krookid Leyk</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=rFTNiX-XRLM" data-vid="rFTNiX-XRLM" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/rFTNiX-XRLM/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">1:38</span></span>
+          <span class="ep-title">Sum-Bourbon Joe Visits Freedom Run Winery 🍷 | Tracing the Buffalo</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=wAi2J4-P1kI" data-vid="wAi2J4-P1kI" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/wAi2J4-P1kI/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">0:53</span></span>
+          <span class="ep-title">Macomb County, Been to Partridge Creek Lately? 👀</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=eQv5xgZqJdA" data-vid="eQv5xgZqJdA" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/eQv5xgZqJdA/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">2:36</span></span>
+          <span class="ep-title">Macomb County, Remember Lakeside Mall? Here’s What’s Next 👀</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=DW_ujyEVI-Q" data-vid="DW_ujyEVI-Q" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/DW_ujyEVI-Q/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">32:01</span></span>
+          <span class="ep-title">Sum-Bourbon Joe S4E4 - Gibbs, Goff, and Lakeside Mall Farewell</span>
+        </a>
+        <a class="ep-card" href="https://www.youtube.com/watch?v=-D7nXvSBFyo" data-vid="-D7nXvSBFyo" target="_blank" rel="noopener">
+          <span class="ep-thumb"><img src="https://i.ytimg.com/vi/-D7nXvSBFyo/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" /><span class="ep-play">&#9654;</span><span class="ep-dur">40:43</span></span>
+          <span class="ep-title">Sum-Bourbon Joe S4E3 - Dads, Sons, and Tailgates</span>
+        </a>
+      </div>
+      <div style="text-align:center; margin-top:26px;">
+        <a class="btn btn-outline" href="https://www.youtube.com/@SumbourbonJoe/videos" target="_blank" rel="noopener">See Every Video On YouTube &#8250;</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="subscribe-banner">
+        <div class="sb-eyebrow">Don't Miss The Next One</div>
+        <h2>Subscribe And <span class="accent">Pull Up A Chair</span></h2>
+        <p>Hit subscribe on YouTube so every new episode lands in your feed. It's free, and it's the best way to support the show.</p>
+        <a class="btn btn-subscribe" href="https://www.youtube.com/@SumbourbonJoe?sub_confirmation=1" target="_blank" rel="noopener"><span class="sub-icon">&#9654;</span> Subscribe On YouTube</a>
+      </div>
     </div>
   </section>
 </main>
@@ -112,5 +201,22 @@
 <script src="assets/supabase-client.js"></script>
 <script src="assets/analytics.js"></script>
 <script src="assets/site.js"></script>
+<script>
+// Clicking a recent episode plays it in the main player instead of leaving the page.
+// (Without JavaScript the cards are plain links to YouTube.)
+document.addEventListener("DOMContentLoaded", () => {
+  const player = document.getElementById("mainPlayer");
+  const grid = document.getElementById("epGrid");
+  if (!player || !grid) return;
+  grid.addEventListener("click", (e) => {
+    const card = e.target.closest("[data-vid]");
+    if (!card || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    player.src = "https://www.youtube-nocookie.com/embed/" + card.dataset.vid + "?list=UU0X1ZPXuBwicXtndB7G1SgQ&autoplay=1&rel=0";
+    player.title = card.querySelector(".ep-title").textContent;
+    player.closest(".section").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+</script>
 </body>
 </html>
