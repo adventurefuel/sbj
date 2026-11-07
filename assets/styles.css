@@ -287,6 +287,59 @@ nav.main-nav a.active {
   color: var(--cream-dim);
 }
 
+/* ---------- Subscribe button (home hero + Watch page) ---------- */
+
+.btn-subscribe {
+  background: var(--gold);
+  color: #1a1204;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  padding: 20px 40px;
+  border-radius: 12px;
+  justify-content: center;
+  box-shadow: 0 0 0 0 rgba(240, 178, 62, 0.55);
+  animation: subPulse 2.6s ease-out infinite;
+}
+.btn-subscribe:hover { background: var(--gold-2); transform: translateY(-1px); }
+.btn-subscribe .sub-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--rust);
+  color: var(--cream);
+  font-size: 11px;
+  padding-left: 2px;
+}
+@keyframes subPulse {
+  0% { box-shadow: 0 0 0 0 rgba(240, 178, 62, 0.5); }
+  70% { box-shadow: 0 0 0 16px rgba(240, 178, 62, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(240, 178, 62, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .btn-subscribe { animation: none; } }
+
+.hero-subscribe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+.hero-subscribe-hint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+@media (max-width: 560px) {
+  .hero-subscribe { width: 100%; }
+  .hero-subscribe .btn-subscribe { width: 100%; max-width: 420px; padding: 20px 22px; font-size: 15px; }
+}
+
 /* ---------- Numbered link cards ---------- */
 
 .card-list {
