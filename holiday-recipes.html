@@ -54,8 +54,9 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
 @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.45}}
 /* snow */
 .snow{position:absolute;inset:0;z-index:1;pointer-events:none}
-.snow span{position:absolute;top:-12px;border-radius:50%;background:#fff;opacity:.75;animation:fall linear infinite}
-@keyframes fall{to{transform:translate3d(var(--dx,20px),calc(100% + 480px),0)}}
+.snow span{position:absolute;top:-40px;line-height:1;color:#fff;text-shadow:0 0 8px rgba(255,255,255,.55);user-select:none;animation:fall linear infinite}
+.snow span.dot{border-radius:50%;background:#fff;text-shadow:none;box-shadow:0 0 6px rgba(255,255,255,.6)}
+@keyframes fall{0%{transform:translate3d(0,0,0) rotate(0deg)}50%{transform:translate3d(calc(var(--dx,20px)*.5 * -1),320px,0) rotate(calc(var(--rot,180deg)*.5))}100%{transform:translate3d(var(--dx,20px),680px,0) rotate(var(--rot,180deg))}}
 @media (prefers-reduced-motion:reduce){.snow{display:none}.lights i{animation:none}}
 /* jump chips */
 .jump-section{padding:30px 0 6px}
@@ -417,11 +418,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Gentle falling snow in the hero (skipped for people who prefer reduced motion).
   const snow = document.getElementById("snow");
   if (snow && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const n = window.innerWidth < 600 ? 22 : 44;
+    const small = window.innerWidth < 600;
+    const n = small ? 26 : 52;
+    const glyphs = ["\u2744", "\u2745", "\u2746"];
     for (let i = 0; i < n; i++) {
       const f = document.createElement("span");
-      const size = 2 + Math.random() * 4;
-      f.style.cssText = "left:" + (Math.random() * 100) + "%;width:" + size + "px;height:" + size + "px;opacity:" + (0.35 + Math.random() * 0.5) + ";animation-duration:" + (9 + Math.random() * 12) + "s;animation-delay:-" + (Math.random() * 18) + "s;--dx:" + (Math.random() * 60 - 30) + "px";
+      const flake = i % 5 !== 0;               // most are snowflakes, a few are soft round dots
+      const size = flake ? (small ? 14 : 16) + Math.random() * (small ? 16 : 24) : 4 + Math.random() * 4;
+      if (flake) f.textContent = glyphs[i % 3]; else f.className = "dot";
+      f.style.cssText = "left:" + (Math.random() * 100) + "%;" + (flake ? "font-size:" + size + "px;" : "width:" + size + "px;height:" + size + "px;") + "opacity:" + (0.45 + Math.random() * 0.5) + ";animation-duration:" + (9 + Math.random() * 10) + "s;animation-delay:-" + (Math.random() * 18) + "s;--dx:" + (Math.random() * 90 - 45) + "px;--rot:" + ((Math.random() < .5 ? -1 : 1) * (120 + Math.random() * 240)) + "deg";
       snow.appendChild(f);
     }
   }
