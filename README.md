@@ -53,6 +53,13 @@ backend, deployed on Render as a static site.
 - `assets/bourbon-badge.css` — page-scoped badge theme for `bourbon.html`
   only (everything nested under `body.page-bourbon`).
 - `assets/collage/` — the photo tiles (small, compressed JPEGs) behind the home-page hero. The wall is the `.hero-collage` block in `index.html`, styled in `assets/styles.css` (tilted grid, low opacity). Swap a photo by replacing its file, keeping the 420x315 size.
+- `assets/share-preview.jpg` — the 1200x630 image shown when a page link is
+  shared (iMessage, WhatsApp, Facebook, LinkedIn, X, Slack). Every public page
+  has a `share-preview` block of Open Graph / Twitter tags in its `<head>`.
+  The tags use the full address `https://sbj-gmu4.onrender.com`; if the site
+  moves to its own domain, find-and-replace that address in the HTML files.
+  Link apps cache previews, so after changing the image or text, refresh a
+  link with Facebook's Sharing Debugger or LinkedIn's Post Inspector.
 - `assets/analytics.js` — lightweight, self-hosted pageview tracker. Loaded
   on every public page (not `admin.html`); logs one row per page load to
   `sbj_page_views`. Viewable on the **Site Analytics** card at the top of
