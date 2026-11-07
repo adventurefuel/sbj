@@ -63,6 +63,12 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
 @media(max-width:860px){.kit-hero-grid{grid-template-columns:1fr;text-align:center}.kit-hero .lead,.kit-hero p{margin-left:auto;margin-right:auto}.kit-actions,.kit-rhythm{justify-content:center}.kit-logo{max-width:280px;order:-1}.mm-steps{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.pkg-grid,.clip-grid{grid-template-columns:1fr}}
 @media(max-width:460px){.mm-steps{grid-template-columns:1fr}.kit-hero{padding-top:36px}}
+.next-steps{margin:0;padding-left:22px;display:grid;gap:10px}.next-steps li::marker{color:var(--gold);font-weight:700}
+.hp-field{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.field select{width:100%;background:var(--ink-2);border:1px solid var(--line);color:var(--cream);padding:12px;border-radius:6px;font:inherit}
+[hidden]{display:none!important}
+.kit-cta p{max-width:600px}
+#inquiry{scroll-margin-top:72px}
 </style>
 </head>
 <body class="page-kit">
@@ -79,7 +85,7 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
       <a href="holiday-recipes.html">Recipes</a>
       <a href="events.html">Wine/Bourbon Events</a>
       <a href="tell-your-story.html">Tell Your Story</a>
-      <a href="sponsors.html" class="active">Sponsors</a>
+      <a href="sponsor-kit.html" class="active">Sponsors</a>
     </nav>
     <div style="display:flex; align-items:center; gap:10px;">
       <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
@@ -96,7 +102,7 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
         <p class="lead">Good bourbon. Good people. Good stories. And a place for local businesses worth talking about.</p>
         <p>When you sponsor Sum-Bourbon Joe, you become part of the neighborhood conversation, not just another ad in the middle of it.</p>
         <div class="kit-actions">
-          <a class="btn btn-gold" href="sponsors.html#sponsorPanel">Talk Sponsorship</a>
+          <a class="btn btn-gold" href="#inquiry">Talk Sponsorship</a>
           <a class="btn btn-outline" href="assets/sponsor-media-kit.pdf" target="_blank" rel="noopener">View The Media Kit (PDF)</a>
         </div>
         <div class="kit-rhythm"><span><b>Saturdays</b> we record</span><span><b>Wednesdays</b> new episodes publish</span></div>
@@ -181,14 +187,83 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
     </div>
   </section>
 
-  <section class="section kit-cta">
-    <div class="container">
+  <section class="section kit-cta" id="inquiry">
+    <div class="container" style="max-width:920px;">
       <div class="eyebrow">The Next Round Starts Here</div>
       <h2 style="font-size:clamp(28px,5vw,48px);margin-top:8px">You Bring The Business.<br><span class="accent">We'll Make Room At The Table.</span></h2>
       <p>Restaurant? Retail shop? Local service? Upcoming event? If Macomb County is your kind of crowd, tell us who you are, what you do, and what you have in mind. We'll see if there's a seat at the table.</p>
-      <div class="kit-actions">
-        <a class="btn btn-gold" href="sponsors.html#sponsorPanel">Send A Sponsor Inquiry</a>
-        <a class="btn btn-outline" href="assets/sponsor-media-kit.pdf" download>Download The Media Kit</a>
+      <div style="text-align:left;margin:26px auto 0;max-width:680px">
+      <div class="form-panel" id="sponsorPanel">
+        <div class="form-head"><span>Sponsor Inquiry</span></div>
+
+        <form id="sponsorForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" maxlength="120" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="company">Company / Brand</label>
+              <input type="text" id="company" maxlength="160" autocomplete="organization" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" maxlength="200" autocomplete="email" placeholder="Where we can reach you" required />
+            </div>
+            <div class="field">
+              <label for="phone">Phone <span style="opacity:.6;text-transform:none;">(optional)</span></label>
+              <input type="tel" id="phone" maxlength="40" autocomplete="tel" />
+            </div>
+            <div class="field full">
+              <label for="website">Website or Instagram <span style="opacity:.6;text-transform:none;">(optional)</span></label>
+              <input type="text" id="website" maxlength="300" placeholder="So we can check out your brand" />
+            </div>
+            <div class="field full">
+              <label for="interest">What Are You Interested In?</label>
+              <select id="interest">
+                <option>Episode Sponsor ($100 / episode)</option>
+                <option>Macomb Minute ($250 / month)</option>
+                <option>Hometown Founding Sponsor ($400 / month)</option>
+                <option>Event / Spotlight ($300 one-time)</option>
+                <option>Something else</option>
+                <option selected>Not sure yet</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="message">Tell Us About Your Brand</label>
+              <textarea id="message" maxlength="4000" placeholder="Who are you, who do you serve, and what do you have in mind?" required></textarea>
+            </div>
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp">Leave this empty</label>
+              <input type="text" id="hp" tabindex="-1" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-rust">Send Inquiry</button>
+            <span class="msg" id="formMsg"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-panel" id="thanksPanel" hidden>
+        <div class="form-head"><span>Inquiry Received</span></div>
+        <div style="padding:6px 4px 4px;">
+          <p style="margin:0 0 14px;">Thanks, <strong id="thanksName"></strong>! Joe's team has your inquiry for <strong id="thanksCompany"></strong>.</p>
+          <p class="eyebrow" style="margin:18px 0 8px;">What Happens Next</p>
+          <ol class="next-steps">
+            <li><strong>The team reviews it.</strong> Usually within a few days.</li>
+            <li><strong>We reach out by email</strong> at <strong id="thanksEmail"></strong> to talk through ideas.</li>
+            <li><strong>We shape a partnership</strong> that fits your brand and the show.</li>
+          </ol>
+        </div>
+      </div>
+
+      <p style="text-align:center; margin-top:28px; font-size:14px;">
+        Rather just message him directly?
+        <a id="waSponsorLink" href="#" target="_blank" rel="noopener" style="color:var(--gold);">WhatsApp Joe</a> instead.
+      </p>
+      <p class="kit-fine" style="margin-top:14px">Prefer the paperwork first? <a href="assets/sponsor-media-kit.pdf" download style="color:var(--gold)">Download the media kit (PDF)</a>.</p>
       </div>
     </div>
   </section>
@@ -206,7 +281,7 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
       <a href="holiday-recipes.html">Recipes</a>
       <a href="events.html">Wine/Bourbon Events</a>
       <a href="tell-your-story.html">Tell Your Story</a>
-      <a href="sponsors.html">Sponsors</a>
+      <a href="sponsor-kit.html">Sponsors</a>
     </nav>
     <div class="footer-social" id="footerSocial"></div>
     <div class="copyright">&copy; <span id="year"></span> Sum-Bourbon Joe. All rights reserved.</div>
@@ -222,5 +297,66 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
 <script src="assets/supabase-client.js"></script>
 <script src="assets/analytics.js"></script>
 <script src="assets/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = (id) => document.getElementById(id);
+  $("waSponsorLink").href = waLink("Hey Joe, I'm interested in sponsoring the show.");
+
+  const form = $("sponsorForm");
+  const formMsg = $("formMsg");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    formMsg.textContent = "";
+    formMsg.className = "msg";
+
+    const name = $("name").value.trim();
+    const company = $("company").value.trim();
+    const email = $("email").value.trim();
+    const phone = $("phone").value.trim();
+    const website = $("website").value.trim();
+    const interest = $("interest").value;
+    const message = $("message").value.trim();
+
+    if (!name || !company || !email || !message) {
+      formMsg.textContent = "Fill in your name, company, email, and a few words about your brand.";
+      formMsg.className = "msg err";
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      formMsg.textContent = "That email doesn't look right.";
+      formMsg.className = "msg err";
+      return;
+    }
+
+    const submitBtn = form.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+
+    // Bots fill the hidden field; pretend it worked and send nothing.
+    let error = null;
+    if (!$("hp").value) {
+      ({ error } = await db.from("sbj_sponsor_inquiries").insert({
+        name, company, email, phone: phone || null, website: website || null, interest, message,
+      }));
+    }
+
+    submitBtn.disabled = false;
+
+    if (error) {
+      formMsg.textContent = "Couldn't send that. Try again in a moment.";
+      formMsg.className = "msg err";
+      return;
+    }
+
+    $("thanksName").textContent = name.split(/\s+/)[0];
+    $("thanksCompany").textContent = company;
+    $("thanksEmail").textContent = email;
+    form.reset();
+    $("sponsorPanel").hidden = true;
+    $("thanksPanel").hidden = false;
+    $("thanksPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+</script>
 </body>
 </html>

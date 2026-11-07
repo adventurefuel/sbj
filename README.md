@@ -48,19 +48,18 @@ backend, deployed on Render as a static site.
 - `tell-your-story.html` — the "want to be on the show" submission form
   (name, email, optional phone, story). After sending, the guest sees a
   thank-you panel explaining what happens next.
-- `sponsors.html` — "Sponsor The Show" page: three ways to partner plus an
-  inquiry form (name, company, email, optional phone/website, interest,
-  message). Saved to `sbj_sponsor_inquiries`; has a hidden honeypot field
-  to drop bot submissions. Linked from the header and footer menu of every
-  page. Inquiries are tracked on the **Sponsor Inquiries** card in `/admin.html`.
-- `sponsor-kit.html` — **Pull Up A Chair sponsor kit**, built from the SBJ
-  Sponsor Media Kit PDF: the four packages with prices (Episode Sponsor $100 /
-  episode, Macomb Minute $250 / month, Hometown Founding $400 / month, Event /
-  Spotlight $300 one-time), the Macomb Minute segment, and the clip formats.
-  Not in the main menu; reached from a button on `sponsors.html`, and its
-  buttons lead back to the inquiry form there. The downloadable PDF is
-  `assets/sponsor-media-kit.pdf` (replace that file to update it; update the
-  prices in the page too, they are written directly in the HTML).
+- `sponsor-kit.html` — **Sponsors page** ("Pull Up A Chair" sponsor kit), the
+  one page behind the menu's Sponsors link. Built from the SBJ Sponsor Media
+  Kit PDF: the four packages with prices (Episode Sponsor $100 / episode,
+  Macomb Minute $250 / month, Hometown Founding $400 / month, Event /
+  Spotlight $300 one-time), the Macomb Minute segment, the clip formats, and
+  the **sponsor inquiry form** at the bottom (`#inquiry`). Form entries are
+  saved to `sbj_sponsor_inquiries` (hidden honeypot field drops bots) and show
+  a thank-you panel; track them on the **Sponsor Inquiries** card in
+  `/admin.html`. The prices are written directly in the HTML, and the
+  downloadable PDF is `assets/sponsor-media-kit.pdf` (replace it to update).
+- `sponsors.html` — only a forwarder to `sponsor-kit.html` (plus `_redirects`
+  rules), so old links and shares keep working.
 - `guest-questionnaire.html` — private questionnaire page. Reached only
   through a per-guest link (`?t=<token>`) that an admin sends from the
   Guest Pipeline; answers are saved through the `sbj_submit_questionnaire`
