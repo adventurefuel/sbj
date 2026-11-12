@@ -99,6 +99,9 @@
           if (params.lead_type === "guest_story") window.fbq("track", "Contact");
           else window.fbq("track", "Lead", { content_name: params.interest || "Sponsor inquiry" });
         }
+      } else if (name === "podcast_click") {
+        if (hasGA) window.gtag("event", "podcast_click", { platform: params.platform || "" });
+        if (hasMeta) window.fbq("trackCustom", "PodcastClick", { platform: params.platform || "" });
       } else if (name === "youtube_click") {
         if (hasGA) window.gtag("event", "youtube_click", { link_location: params.location || "" });
         if (hasMeta) window.fbq("trackCustom", "YouTubeClick", { location: params.location || "" });
@@ -110,6 +113,7 @@
   document.addEventListener("click", function (ev) {
     var a = ev.target && ev.target.closest ? ev.target.closest("a[href]") : null;
     if (!a) return;
+    if (a.getAttribute("data-pod")) { window.sbjTrack("podcast_click", { platform: a.getAttribute("data-pod") }); return; }
     var href = a.getAttribute("href") || "";
     if (/^https?:\/\/(www\.)?youtube\.com\//i.test(href) || /^https?:\/\/youtu\.be\//i.test(href)) {
       var page = (location.pathname.split("/").pop() || "index").replace(/\.html$/, "") || "index";
