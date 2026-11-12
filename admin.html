@@ -753,6 +753,12 @@ function renderSponsors() {
     : `<div class="bar-empty">${sponsors.length ? "Nothing in this stage." : "No inquiries yet."}</div>`;
 }
 
+function spSource(x) {
+  if (!x.utm_source && !x.utm_medium && !x.utm_campaign) return "Direct or untagged link";
+  const bits = [x.utm_source, x.utm_medium, x.utm_campaign, x.utm_content].filter(Boolean).map(escapeHtml);
+  return bits.join(" / ") + (x.landing_page ? " &middot; landed on " + escapeHtml(x.landing_page) : "");
+}
+
 function sponsorHtml(x) {
   const open = spOpenId === x.id;
   let body = "";
@@ -765,6 +771,8 @@ function sponsorHtml(x) {
       <div class="g-text">${escapeHtml(x.interest)}</div>
       <div class="g-label">Message</div>
       <div class="g-text">${escapeHtml(x.message)}</div>
+      <div class="g-label">Came from</div>
+      <div class="g-text">${spSource(x)}</div>
       <div class="g-label">Notes (saved when you click away)</div>
       <textarea class="g-notes" data-spnotes="${x.id}" maxlength="4000" placeholder="Internal notes, only admins see this">${escapeHtml(x.notes || "")}</textarea>
       <div class="g-actions">

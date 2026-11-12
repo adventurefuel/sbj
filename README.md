@@ -262,3 +262,23 @@ Instagram and Facebook are live (`instagram.com/sumbourbonjoe`,
 `facebook.com/sumbourbonjoe`). TikTok is set to `#` in
 `assets/supabase-client.js` (`SOCIALS.tiktok`) until there's a handle —
 update it there once one exists.
+
+## Tracking and alerts
+
+**Tags (installed on every public page, never on admin):** `assets/tracking.js` loads Google Analytics 4 (`G-8LEQ5MR5RJ`) and the Meta Pixel (`2749134455489442`). To turn one off, set its ID to `""` at the top of that file. Events sent: page views (both), `generate_lead` / Meta `Lead` on a sponsor inquiry, GA `generate_lead` / Meta `Contact` on a guest story, and a `youtube_click` / Meta `YouTubeClick` whenever someone clicks a link to the YouTube channel. The built-in pageview counter (`analytics.js`) stays cookieless and separate.
+
+**Ownership:** both assets belong to SBJ-owned accounts (Meta Business portfolio and Google account), with Adventure Fuel added as admin partner. If the agency relationship changes, SBJ keeps the data.
+
+**UTM rule.** Tag every link you post (bio, captions, newsletters, ads) with all three of these, lowercase, hyphens for spaces:
+
+| Field | What it means | Examples |
+|---|---|---|
+| `utm_source` | where the link lives | `instagram`, `facebook`, `youtube`, `newsletter`, `qr` |
+| `utm_medium` | type of placement | `bio`, `post`, `story`, `paid`, `email`, `print` |
+| `utm_campaign` | the push it belongs to | `holiday-pour`, `pull-up-a-chair`, `macomb-minute` |
+
+Optional: `utm_content` (which version, e.g. `reel-1`). Example: `https://sbj-gmu4.onrender.com/sponsor-kit.html?utm_source=instagram&utm_medium=bio&utm_campaign=pull-up-a-chair`
+
+The site remembers the most recent UTM tags for 30 days (browser storage), saves them on each sponsor inquiry (shown as "Came from" in admin and in the alert email), and records source/medium/campaign on pageviews. Untagged visits show as direct.
+
+**Sponsor inquiry alerts:** a database trigger calls the `sbj-notify` edge function, which emails the addresses in `sbj_settings.team_emails` through Resend. It needs the `RESEND_API_KEY` secret. Until a domain is verified in Resend, use Resend's test sender (`onboarding@resend.dev`), which can only deliver to the email the Resend account was created with. Once a domain like sbjmacomb.com is verified, set `from_email` to an address on it and add the whole team to `team_emails`.

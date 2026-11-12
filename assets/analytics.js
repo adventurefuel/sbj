@@ -35,12 +35,16 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     if (typeof db === "undefined") return;
+    const utm = (window.sbjUtm && window.sbjUtm()) || {};
     db.from("sbj_page_views")
       .insert({
         page: pageKey(),
         path: location.pathname,
         referrer: referrerHost(),
         device: detectDevice(),
+        utm_source: utm.utm_source || null,
+        utm_medium: utm.utm_medium || null,
+        utm_campaign: utm.utm_campaign || null,
       })
       .then(() => {}, () => {});
   });

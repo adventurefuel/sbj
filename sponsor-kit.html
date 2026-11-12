@@ -295,6 +295,7 @@ body.page-kit .kit-hero{padding:64px 0 52px;border-bottom:1px solid var(--line-s
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/supabase-client.js"></script>
+<script src="assets/tracking.js"></script>
 <script src="assets/analytics.js"></script>
 <script src="assets/site.js"></script>
 <script>
@@ -335,9 +336,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Bots fill the hidden field; pretend it worked and send nothing.
     let error = null;
     if (!$("hp").value) {
+      const utm = (window.sbjUtm && window.sbjUtm()) || {};
       ({ error } = await db.from("sbj_sponsor_inquiries").insert({
         name, company, email, phone: phone || null, website: website || null, interest, message,
+        utm_source: utm.utm_source || null, utm_medium: utm.utm_medium || null,
+        utm_campaign: utm.utm_campaign || null, utm_content: utm.utm_content || null,
+        utm_term: utm.utm_term || null, landing_page: utm.landing_page || null,
       }));
+      if (!error && window.sbjTrack) sbjTrack("lead", { lead_type: "sponsor", interest });
     }
 
     submitBtn.disabled = false;

@@ -148,6 +148,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/supabase-client.js"></script>
+<script src="assets/tracking.js"></script>
 <script src="assets/analytics.js"></script>
 <script src="assets/site.js"></script>
 <script>
@@ -196,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (window.sbjTrack) sbjTrack("lead", { lead_type: "guest_story" });
     document.getElementById("thanksName").textContent = name.split(/\s+/)[0];
     document.getElementById("thanksEmail").textContent = email;
     form.reset();
