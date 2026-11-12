@@ -214,6 +214,32 @@
     </div>
   </section>
 
+  <section class="section pp-section" id="proof-pack">
+    <div class="container">
+      <div class="pp-ticket">
+        <div class="pp-stub"><div>Backstage <br>Pass<small>Proof Pack</small></div></div>
+        <div class="pp-main">
+          <div class="eyebrow">The Pour Sheet</div>
+          <h2>Join the <span class="accent">Proof Pack</span></h2>
+          <p class="pp-copy">The Pour Sheet is your backstage pass. Episode first, local pours, first word on everything.</p>
+          <form class="pp-form" data-page="index" novalidate>
+            <div class="pp-fields">
+              <input type="text" name="first_name" placeholder="First name" maxlength="60" autocomplete="given-name" aria-label="First name" required>
+              <input type="email" name="email" placeholder="Email address" maxlength="200" autocomplete="email" aria-label="Email address" required>
+              <input type="text" name="hp" class="pp-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <button class="btn btn-gold pp-btn" type="submit">Join the Proof Pack</button>
+            </div>
+            <div class="pp-msg" role="status" aria-live="polite"></div>
+          </form>
+          <div class="pp-done" hidden>
+            <p class="pp-done-title">You&rsquo;re in, <span class="pp-done-name"></span>.</p>
+            <p>Your welcome note is on its way. If it&rsquo;s not in your inbox in a few minutes, peek in spam.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container">
       <div class="head">
@@ -269,6 +295,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/supabase-client.js"></script>
 <script src="assets/tracking.js"></script>
+<script src="assets/proofpack.js"></script>
 <script src="assets/analytics.js"></script>
 <script src="assets/site.js"></script>
 </body>

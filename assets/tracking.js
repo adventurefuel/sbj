@@ -97,6 +97,7 @@
         if (hasGA) window.gtag("event", "generate_lead", { lead_type: params.lead_type || "unknown", interest: params.interest || undefined });
         if (hasMeta) {
           if (params.lead_type === "guest_story") window.fbq("track", "Contact");
+          else if (params.lead_type === "proof_pack") window.fbq("track", "Lead", { content_name: "Proof Pack" });
           else window.fbq("track", "Lead", { content_name: params.interest || "Sponsor inquiry" });
         }
       } else if (name === "podcast_click") {

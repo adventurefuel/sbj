@@ -210,6 +210,16 @@
     </div>
 
     <div class="card-block">
+      <h2>Proof Pack</h2>
+      <div class="desc">People who joined from the homepage tile or the Proof Pack page, newest first. Download the whole list as a CSV to load into any email tool.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div id="ppStats" class="pipe-tabs"></div>
+        <button class="btn btn-outline" id="ppCsvBtn" type="button">Download CSV</button>
+      </div>
+      <div id="ppList" class="pipe-list"><div class="bar-empty">Loading&hellip;</div></div>
+    </div>
+
+    <div class="card-block">
       <h2>What's Pouring Locally &mdash; Events</h2>
       <div class="desc">Add, edit, or remove events shown on the Wine/Bourbon Events page. An event can have more than one date &mdash; useful for a weekly series like a standing Sunday pour.</div>
       <div class="tbl-wrap">
@@ -330,6 +340,7 @@ async function refreshGate() {
   loadSettings();
   loadStories();
   loadSponsors();
+  loadProofPack();
   loadEvents();
   loadPriceSheet();
   loadChecks();
@@ -377,7 +388,7 @@ const PAGE_LABELS = {
   events: "Wine/Bourbon Events",
   "tell-your-story": "Tell Your Story",
   sponsors: "Sponsors",
-  "holiday-recipes": "Holiday Recipes", "sponsor-kit": "Sponsor Kit",
+  "holiday-recipes": "Holiday Recipes", "sponsor-kit": "Sponsor Kit", "proof-pack": "Proof Pack",
   admin: "Admin",
 };
 
@@ -789,6 +800,70 @@ function sponsorHtml(x) {
       <span class="g-date">${fmtWhen(x.created_at)}</span>
     </div>${body}</div>`;
 }
+
+// ---------- Proof Pack ----------
+let proofPack = [];
+
+async function loadProofPack() {
+  const { data, error } = await db.from("sbj_proof_pack").select("*").order("created_at", { ascending: false }).limit(5000);
+  if (error) { $("ppList").innerHTML = `<div class="bar-empty">Couldn't load the Proof Pack list.</div>`; return; }
+  proofPack = data || [];
+  renderProofPack();
+}
+
+function ppStatus(x) { return x.unsubscribed_at ? "unsubscribed" : "active"; }
+
+function renderProofPack() {
+  const active = proofPack.filter((x) => !x.unsubscribed_at).length;
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const week = proofPack.filter((x) => new Date(x.created_at).getTime() >= weekAgo).length;
+  $("ppStats").innerHTML =
+    `<span class="pipe-tab on">active<b>${active}</b></span>` +
+    `<span class="pipe-tab">new this week<b>${week}</b></span>` +
+    `<span class="pipe-tab">unsubscribed<b>${proofPack.length - active}</b></span>`;
+  const shown = proofPack.slice(0, 100);
+  $("ppList").innerHTML = shown.length
+    ? shown.map((x) => {
+        const src = [x.utm_source, x.utm_medium, x.utm_campaign].filter(Boolean).map(escapeHtml).join(" / ") || "direct";
+        return `<div class="guest"><div class="guest-head" style="cursor:default;">
+          <span class="g-name">${escapeHtml(x.first_name)}</span>
+          <span class="g-sub">${escapeHtml(x.email)} &middot; ${src}</span>
+          <span class="badge st">${ppStatus(x)}</span>
+          <span class="g-date">${fmtWhen(x.created_at)}</span>
+          <button class="btn btn-outline" type="button" data-pptoggle="${x.id}" style="margin-left:8px; padding:5px 10px; font-size:11px;">${x.unsubscribed_at ? "Resubscribe" : "Unsubscribe"}</button>
+        </div></div>`;
+      }).join("") + (proofPack.length > 100 ? `<div class="bar-empty">Showing the latest 100 of ${proofPack.length}. The CSV has everyone.</div>` : "")
+    : `<div class="bar-empty">No one has joined yet.</div>`;
+}
+
+function csvCell(v) {
+  let t = String(v ?? "");
+  if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; // stop spreadsheet formula injection
+  return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+
+$("ppCsvBtn").addEventListener("click", () => {
+  const head = ["first_name", "email", "status", "joined", "signup_page", "utm_source", "utm_medium", "utm_campaign"];
+  const rows = proofPack.map((x) => [x.first_name, x.email, ppStatus(x), x.created_at, x.signup_page, x.utm_source, x.utm_medium, x.utm_campaign]);
+  const csv = [head].concat(rows).map((r) => r.map(csvCell).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "proof-pack-" + new Date().toISOString().slice(0, 10) + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+$("ppList").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-pptoggle]");
+  if (!b) return;
+  const x = proofPack.find((r) => r.id === b.dataset.pptoggle);
+  if (!x) return;
+  b.disabled = true;
+  const value = x.unsubscribed_at ? null : new Date().toISOString();
+  const { error } = await db.from("sbj_proof_pack").update({ unsubscribed_at: value }).eq("id", x.id);
+  if (error) { b.disabled = false; return; }
+  x.unsubscribed_at = value;
+  renderProofPack();
+});
 
 async function patchSponsor(id, fields) {
   const { error } = await db.from("sbj_sponsor_inquiries").update(fields).eq("id", id);
