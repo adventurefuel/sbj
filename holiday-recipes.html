@@ -115,7 +115,7 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
       <a href="sponsor-kit.html">Sponsors</a>
     </nav>
     <div style="display:flex; align-items:center; gap:10px;">
-      <a class="btn btn-gold" id="waHeaderBtn" target="_blank" rel="noopener">WhatsApp Joe</a>
+      <a class="btn btn-gold" href="proof-pack.html">Join the Proof Pack</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
     </div>
   </div>
@@ -374,7 +374,7 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
         <p>Made one of these? Tell Joe about it, and don't forget to subscribe so you never miss a Wednesday episode.</p>
         <div class="outro-actions">
           <a class="btn btn-gold" href="https://www.youtube.com/@SumbourbonJoe?sub_confirmation=1" target="_blank" rel="noopener">Subscribe On YouTube</a>
-          <a class="btn btn-outline" id="waHolidayBtn" target="_blank" rel="noopener">Message Joe</a>
+          <a class="btn btn-outline" href="https://m.me/sumbourbonjoe" target="_blank" rel="noopener">Message Joe</a>
         </div>
         <p class="fine">Please enjoy responsibly and never drive after drinking. For adults of legal drinking age. Recipes are Sum-Bourbon Joe specifications for one serving each (US fluid ounces, ice as needed), so taste-test before you serve. The cocktail photos are AI-generated presentation visuals.</p>
       </div>
@@ -414,8 +414,6 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
 <script src="assets/site.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const wa = document.getElementById("waHolidayBtn");
-  if (wa) wa.href = waLink("Hey Joe, I made one of your holiday cocktails!");
   // Gentle falling snow in the hero (skipped for people who prefer reduced motion).
   const snow = document.getElementById("snow");
   if (snow && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

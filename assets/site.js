@@ -1,14 +1,7 @@
-// SUM-BOURBON JOE — shared page behavior (nav toggle, WhatsApp links,
-// footer socials, year). Runs on every page after supabase-client.js.
+// SUM-BOURBON JOE — shared page behavior (nav toggle, footer socials,
+// year). Runs on every page after supabase-client.js.
 
 document.addEventListener("DOMContentLoaded", () => {
-  // WhatsApp buttons: any element with a data-wa-text attribute, plus the
-  // two standard header/CTA buttons.
-  const defaultMsg = "Hey Joe, I've got something worth talking about.";
-  document.querySelectorAll("#waHeaderBtn, #waCtaBtn, [data-wa-link]").forEach((el) => {
-    const msg = el.getAttribute("data-wa-text") || defaultMsg;
-    el.href = waLink(msg);
-  });
 
   // Any link-card (or other element) that wants to point at a social
   // profile: set data-social="instagram" / "facebook" / etc. and this
