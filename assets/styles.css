@@ -825,9 +825,25 @@ details.price-sheet-toggle summary:hover { color: var(--gold); }
   margin-top: 26px;
 }
 
-@media (max-width: 860px) {
+/* Header: the menu collapses into the hamburger below 1040px so the labels never wrap. */
+nav.main-nav a { white-space: nowrap; }
+.site-header .nav-cta { white-space: nowrap; }
+.nav-cta .cta-short { display: none; }
+@media (max-width: 1040px) {
   nav.main-nav { display: none; }
   .nav-toggle { display: block; }
+}
+@media (max-width: 520px) {
+  .nav-cta .cta-full { display: none; }
+  .nav-cta .cta-short { display: inline; }
+  .site-header .nav-cta { padding: 11px 14px; font-size: 12px; letter-spacing: 0.08em; }
+  .site-header .container { gap: 10px; }
+}
+@media (max-width: 420px) {
+  .brand-short { display: none !important; }
+}
+
+@media (max-width: 860px) {
   .form-grid { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: 1fr; }
   .cta-box { flex-direction: column; text-align: center; }

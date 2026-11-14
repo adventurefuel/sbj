@@ -12,7 +12,7 @@ backend, deployed on Render as a static site.
 
 - `index.html` — landing page. Hero, the four "what brought you here" cards
   (Tell Your Story / Watch / Bourbon Price Checker / What's Pouring
-  Locally), the "want to be on the show" steps, and the WhatsApp CTA box.
+  Locally), the Proof Pack ticket tile, the "want to be on the show" steps, and the Tell Your Story CTA box.
 - `holiday-recipes.html` — **The Holiday Pour** (menu label "Recipes"). Ten
   festive bourbon cocktails with photos, ingredients, steps and serve notes,
   built from the SBJ Holiday Pour PDF. Warm Christmas look (string lights,
@@ -69,11 +69,12 @@ backend, deployed on Render as a static site.
 - `assets/styles.css` — shared design tokens (Ink/near-black background,
   Gold/Rust accents, Anton + Archivo + JetBrains Mono — same font family
   convention as the 4DRIP Design Guide).
-- `assets/supabase-client.js` — Supabase client + WhatsApp link + socials
-  helpers. **Only holds the public anon key** — safe to expose in client
+- `assets/supabase-client.js` — Supabase client + socials helpers (the
+  old WhatsApp link helper is still in there but no longer used on public pages). **Only holds the public anon key** — safe to expose in client
   code; every write is enforced server-side by Postgres Row Level Security.
 - `assets/site.js` — shared nav/footer behavior (mobile menu with open/close
-  icon, Escape and tap-a-link to close; WhatsApp links, socials, year). The
+  icon, Escape and tap-a-link to close; socials, year). The menu collapses into the
+  hamburger below 1040px so the labels never wrap. The
   big full-width phone menu is styled in `assets/styles.css` (`mobile-open`).
 - `assets/bourbon.js` — price-checker logic.
 - `assets/bourbon-badge.css` — page-scoped badge theme for `bourbon.html`
@@ -249,12 +250,11 @@ Deployed as a Render **Static Site** from this GitHub repo
 (`adventurefuel/sbj`), publish directory `.` (repo root), no build command
 — plain HTML/CSS/JS. `_redirects` sends unmatched paths to `index.html`.
 
-## WhatsApp number
+## Header button and messaging
 
-`15866128753` (+1 586 612 8753) is set in `assets/supabase-client.js`
-(`WA_NUMBER`) and used everywhere — the nav button, the homepage CTA box,
-and the "Tell Your Story" page. Change it in that one file if it ever
-needs to change.
+The gold header button on every public page is **Join the Proof Pack** (shortened to "Join the Pack" on phones). On the homepage it scrolls to the Proof Pack tile; everywhere else it opens `proof-pack.html`. The old WhatsApp buttons were replaced: "message Joe" links now open Messenger (`m.me/sumbourbonjoe`, which resolves to the SBJ Facebook Page), and the homepage CTA box points to Tell Your Story. Menu labels: Home, Watch, Recipes, Events, Your Story, Sponsors.
+
+Render does not read `_redirects`, so it has no effect on the live site (the file is kept for reference). Old addresses (`sponsors.html`, `detroit.html`) are small forwarding pages instead. For a clean short link like `/proof-pack`, add a Rewrite in the Render dashboard (source `/proof-pack`, destination `/proof-pack.html`).
 
 ## Socials
 
