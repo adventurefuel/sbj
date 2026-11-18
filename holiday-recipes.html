@@ -30,11 +30,11 @@
 <link rel="stylesheet" href="assets/styles.css" />
 <style>
 [hidden]{display:none!important}
-body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#ffd98a;--wine:#2a0f14;background:radial-gradient(1100px 520px at 50% -80px,rgba(179,38,58,.28),transparent 70%),radial-gradient(900px 600px at 100% 30%,rgba(47,125,91,.10),transparent 70%),var(--ink)}
+body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#ffd98a;--wine:#2c2013;background:radial-gradient(1100px 520px at 50% -80px,rgba(150,98,44,.30),transparent 70%),radial-gradient(900px 600px at 100% 30%,rgba(47,125,91,.10),transparent 70%),var(--ink)}
 .page-holiday .section{border-top:none}
 .page-holiday h1,.page-holiday h2,.drink h2{font-family:'Playfair Display',Georgia,'Times New Roman',serif;text-transform:none;letter-spacing:0;font-weight:700}
 /* hero */
-.holiday-hero{position:relative;overflow:hidden;text-align:center;padding:92px 0 64px;border-bottom:1px solid rgba(255,217,138,.18);background:linear-gradient(180deg,rgba(42,15,20,.9),rgba(20,8,10,0) 100%)}
+.holiday-hero{position:relative;overflow:hidden;text-align:center;padding:92px 0 64px;border-bottom:1px solid rgba(255,217,138,.18);background:linear-gradient(180deg,rgba(55,39,21,.92),rgba(28,19,12,0) 100%)}
 .hh-inner{position:relative;z-index:2}
 .holiday-hero h1{font-size:clamp(44px,9vw,92px);line-height:1.02;margin:14px 0 14px;color:var(--cream)}
 .holiday-hero h1 .accent{color:var(--gold);font-style:italic;font-weight:500}
@@ -62,20 +62,22 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
 .jump-section{padding:30px 0 6px}
 .jump-label{text-align:center;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:14px}
 .jump-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.jump-chip{font-size:13px;padding:8px 14px;border:1px solid rgba(255,217,138,.28);border-radius:999px;background:rgba(42,15,20,.55);color:var(--cream)}
+.jump-chip{font-size:13px;padding:8px 14px;border:1px solid rgba(255,217,138,.28);border-radius:999px;background:rgba(55,39,21,.65);color:var(--cream)}
 .jump-chip span{font-family:var(--font-mono);font-size:10px;color:var(--gold);margin-right:4px}
 .jump-chip:hover{border-color:var(--gold);color:var(--gold)}
 /* drinks */
 .drinks-section{padding-top:30px}
-.drink{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:center;margin:0 0 34px;padding:22px;border:1px solid rgba(255,217,138,.2);border-radius:20px;background:linear-gradient(160deg,rgba(42,15,20,.72),rgba(20,16,14,.82));box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.02);scroll-margin-top:90px}
+.drink{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:center;margin:0 0 34px;padding:22px;border:1px solid rgba(255,217,138,.2);border-radius:20px;background:linear-gradient(160deg,rgba(55,39,21,.80),rgba(28,19,12,.90));box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.02);scroll-margin-top:90px}
 .drink.flip .drink-photo{order:2}
+#drink-1{grid-template-columns:1.5fr 1fr}
+#drink-1 .drink-photo{align-self:center;min-height:0;aspect-ratio:941/606}
 .drink-photo{margin:0;border-radius:14px;overflow:hidden;align-self:stretch;min-height:300px;background:#000;box-shadow:0 0 0 1px rgba(255,217,138,.25),0 10px 30px rgba(0,0,0,.4)}
 .drink-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .drink-body{padding:6px 6px 6px 0}
 .drink.flip .drink-body{padding:6px 0 6px 6px}
 .drink-num{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--cream-dim)}
 .drink-num .bar{width:34px;height:3px;border-radius:2px;background:var(--gold)}
-.acc-red .drink-num .bar{background:#ff6b7c}.acc-pine .drink-num .bar{background:#4fd39b}
+.acc-red .drink-num .bar{background:#d9553a}.acc-pine .drink-num .bar{background:#4fd39b}
 .drink h2{font-size:clamp(26px,3.6vw,38px);line-height:1.12;margin:10px 0 6px;color:var(--cream)}
 .drink-tag{margin:0 0 16px;font-style:italic;color:var(--candle);font-family:'Playfair Display',Georgia,serif;font-size:16px}
 .drink .label{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px}
@@ -86,9 +88,9 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
 .serve{margin-top:16px;padding-top:14px;border-top:1px dashed rgba(255,217,138,.25);display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .serve .label{margin:0 6px 0 0}
 .serve-tag{font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(255,217,138,.1);border:1px solid rgba(255,217,138,.25);color:var(--cream)}
-@media (max-width:820px){.drink{grid-template-columns:1fr;gap:18px;padding:14px}.drink-photo{align-self:auto;min-height:0;aspect-ratio:3/2}.drink.flip .drink-photo{order:0}.drink-body,.drink.flip .drink-body{padding:2px 6px 8px}}
+@media (max-width:820px){.drink,#drink-1{grid-template-columns:1fr;gap:18px;padding:14px}.drink-photo{align-self:auto;min-height:0;aspect-ratio:3/2}.drink.flip .drink-photo{order:0}.drink-body,.drink.flip .drink-body{padding:2px 6px 8px}}
 /* outro */
-.holiday-outro{max-width:720px;margin:0 auto;text-align:center;padding:48px 26px;border:1px solid rgba(255,217,138,.3);border-radius:20px;background:radial-gradient(500px 220px at 50% 0,rgba(179,38,58,.25),transparent 70%),rgba(42,15,20,.6)}
+.holiday-outro{max-width:720px;margin:0 auto;text-align:center;padding:48px 26px;border:1px solid rgba(255,217,138,.3);border-radius:20px;background:radial-gradient(500px 220px at 50% 0,rgba(150,98,44,.28),transparent 70%),rgba(55,39,21,.75)}
 .outro-star{font-size:30px;color:var(--candle);margin-bottom:6px}
 .holiday-outro h2{font-size:clamp(28px,5vw,44px);margin:0 0 10px;color:var(--cream)}
 .holiday-outro h2 .accent{color:var(--gold);font-style:italic;font-weight:500}
@@ -155,7 +157,7 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
     <div class="container">
       <article class="drink  acc-red" id="drink-1">
         <figure class="drink-photo">
-          <img src="assets/holiday/01-turkey-day-turn-up.jpg" alt="Turkey Day Turn-Up cocktail in a highball glass" width="960" height="640" loading="eager" decoding="async" />
+          <img src="assets/holiday/01-turkey-day-turn-up.jpg" alt="Two Turkey Day Turn-Up cocktails in cinnamon-sugar rimmed glasses, garnished with cranberries and orange peel" width="941" height="606" loading="eager" decoding="async" />
         </figure>
         <div class="drink-body">
           <div class="drink-num"><span class="bar"></span>01</div>
@@ -170,8 +172,8 @@ body.page-holiday{--cranberry:#b3263a;--pine:#2f7d5b;--pine-2:#245f46;--candle:#
               <li>1 tsp cinnamon-sugar blend, for rim</li>
           </ul>
           <div class="label">Make It</div>
-          <p class="steps">Moisten half the rim of a highball with a little measured cider. Dip into cinnamon-sugar. Add ice, bourbon, remaining cider and cranberry juice. Stir gently. Top with ginger beer and give one slow lift with a barspoon.</p>
-          <div class="serve"><span class="label">Serve &amp; Garnish</span><span class="serve-tag">Highball</span><span class="serve-tag">cubed ice</span><span class="serve-tag">half cinnamon-sugar rim</span></div>
+          <p class="steps">Moisten the rim of a rocks glass with a little measured cider. Dip into cinnamon-sugar. Add ice, bourbon, remaining cider and cranberry juice. Stir gently. Top with ginger beer and give one slow lift with a barspoon.</p>
+          <div class="serve"><span class="label">Serve &amp; Garnish</span><span class="serve-tag">Rocks glass</span><span class="serve-tag">cubed ice</span><span class="serve-tag">cinnamon-sugar rim</span></div>
         </div>
       </article>
       <article class="drink flip acc-pine" id="drink-2">
