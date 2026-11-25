@@ -13,6 +13,21 @@ backend, deployed on Render as a static site.
 - `index.html` — landing page. Hero, the four "what brought you here" cards
   (Tell Your Story / Watch / Bourbon Price Checker / What's Pouring
   Locally), the Proof Pack ticket tile, the "want to be on the show" steps, and the Tell Your Story CTA box.
+- `blog.html` + `blog-*.html` — **The SBJ Blog** (menu label "Blog"). `blog.html`
+  lists posts as cards; each post is its own page. First post:
+  `blog-womans-perspective.html` (Marci DuBay, "A Woman's Perspective on
+  Sum-Bourbon Joe"). Each post has a share bar at the top and a share panel at
+  the bottom (Share sheet on phones, Facebook, X, LinkedIn, Email, Copy link),
+  wired by `assets/blog.js`. Shared links always use the post's canonical
+  `sbjmacomb.com` address plus `utm_source=<network>&utm_medium=share&utm_campaign=blog`,
+  and each click fires a `share` event (GA4 `share`, Meta custom `Share`).
+  Link-preview tags (og/twitter) and a BlogPosting JSON-LD block are in each
+  post's head; the 1200x630 preview card lives in `assets/blog/`. Photos come
+  from `assets/collage/`. **To add a post:** copy `blog-womans-perspective.html`
+  to `blog-<short-name>.html`, change the title/description/canonical/og tags,
+  the `data-slug`/`data-title` on both `.share-row`s, the byline and the body,
+  add a share card image, then copy the card in `blog.html` above the existing
+  one. Blog styles are the "Blog" section at the end of `assets/styles.css`.
 - `holiday-recipes.html` — **The Holiday Pour** (menu label "Recipes"). Ten
   festive bourbon cocktails with photos, ingredients, steps and serve notes,
   built from the SBJ Holiday Pour PDF. Warm Christmas look (string lights,

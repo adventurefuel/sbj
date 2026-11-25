@@ -90,6 +90,7 @@
   // ---- Conversion events --------------------------------------------------
   // sbjTrack("lead", { lead_type: "sponsor" | "guest_story", interest: "..." })
   // sbjTrack("youtube_click", { location: "..." })
+  // sbjTrack("share", { method: "facebook" | "x" | "linkedin" | "email" | "copy" | "native", item: "post-slug" })
   window.sbjTrack = function (name, params) {
     params = params || {};
     try {
@@ -103,6 +104,9 @@
       } else if (name === "podcast_click") {
         if (hasGA) window.gtag("event", "podcast_click", { platform: params.platform || "" });
         if (hasMeta) window.fbq("trackCustom", "PodcastClick", { platform: params.platform || "" });
+      } else if (name === "share") {
+        if (hasGA) window.gtag("event", "share", { method: params.method || "", content_type: "blog_post", item_id: params.item || "" });
+        if (hasMeta) window.fbq("trackCustom", "Share", { method: params.method || "", item: params.item || "" });
       } else if (name === "youtube_click") {
         if (hasGA) window.gtag("event", "youtube_click", { link_location: params.location || "" });
         if (hasMeta) window.fbq("trackCustom", "YouTubeClick", { location: params.location || "" });
