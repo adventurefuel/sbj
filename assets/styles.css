@@ -1159,3 +1159,4 @@ body.page-blog { --brown: #2c2013; --brown-2: #372715; --brown-line: #4a3520;
 .post-photo img { width: 100%; height: auto; display: block; border-radius: 14px; box-shadow: 0 0 0 1px var(--brown-line), 0 16px 44px rgba(0,0,0,.45); }
 .post-photo figcaption { margin-top: 10px; font-size: 14px; font-style: italic; color: var(--cream-dim); text-align: center; }
 @media (max-width: 1000px) { .post-body .post-photo { margin: 26px 0 28px; } }
+.post-body .post-photo.narrow { margin: 30px auto 32px; max-width: 720px; }
